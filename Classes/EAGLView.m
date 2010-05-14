@@ -144,9 +144,19 @@
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
 {
 	UITouch *t = [touches anyObject];
-	CGPoint oldP = [t previousLocationInView:self];
 	CGPoint p = [t locationInView:self];
-	CGSize sz = CGSizeMake(p.x-oldP.x, oldP.y-p.y);
-	[renderer pan:sz];
+	if(oldP.x && oldP.y) {
+		CGSize sz = CGSizeMake(oldP.x-p.x, p.y-oldP.y);
+		[renderer pan:sz];
+	}
+	oldP = p;
+}
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
+{
+	oldP = CGPointZero;
+}
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)evt;
+{
+	oldP = CGPointZero;
 }
 @end

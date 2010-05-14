@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		05D86D1D119DB95E004BA8F5 /* CATransform3DAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D86D1C119DB95E004BA8F5 /* CATransform3DAdditions.m */; };
+		05D86E82119E039F004BA8F5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05D86E81119E039F004BA8F5 /* CoreGraphics.framework */; };
 		1D3623260D0F684500981E51 /* BitCraftAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* BitCraftAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -24,6 +25,7 @@
 /* Begin PBXFileReference section */
 		05D86D1B119DB95E004BA8F5 /* CATransform3DAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATransform3DAdditions.h; sourceTree = "<group>"; };
 		05D86D1C119DB95E004BA8F5 /* CATransform3DAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATransform3DAdditions.m; sourceTree = "<group>"; };
+		05D86E81119E039F004BA8F5 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* BitCraftAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitCraftAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* BitCraftAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitCraftAppDelegate.m; sourceTree = "<group>"; };
@@ -52,6 +54,7 @@
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				28FD15000DC6FC520079059D /* OpenGLES.framework in Frameworks */,
 				28FD15080DC6FC5B0079059D /* QuartzCore.framework in Frameworks */,
+				05D86E82119E039F004BA8F5 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +131,7 @@
 				28FD14FF0DC6FC520079059D /* OpenGLES.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				05D86E81119E039F004BA8F5 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

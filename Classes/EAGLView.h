@@ -27,6 +27,8 @@
     // isn't available.
     id displayLink;
     NSTimer *animationTimer;
+		
+		CGPoint oldP;
 }
 
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;

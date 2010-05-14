@@ -23,6 +23,7 @@ enum {
 	NUM_ATTRIBUTES
 };
 
+
 @interface ES2Renderer (PrivateMethods)
 - (BOOL)loadShaders;
 - (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file;
@@ -45,6 +46,8 @@ enum {
 			return nil;
 		}
 		
+		cameraRot = CGPointMake(-0.65, -0.65);
+		
 		// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
 		glGenFramebuffers(1, &defaultFramebuffer);
 		glGenRenderbuffers(1, &colorRenderbuffer);
@@ -61,10 +64,10 @@ enum {
 	// Replace the implementation of this method to do your own custom drawing
 	
 	static const GLfloat squareVertices[] = {
-		-0.2f, -0.2f, //bl
-		0.2f, -0.2f, //br
-		-0.2f,  0.2f, //tl
-		0.2f,  0.2f, //tr
+		-0.2f, -0.2f, 0., //bl
+		0.2f, -0.2f, 0., //br
+		-0.2f,  0.2f, 0., //tl
+		0.2f,  0.2f, 0. //tr
 	};
 	
 	static const GLubyte squareColors[] = {
@@ -92,9 +95,10 @@ enum {
 	// Use shader program
 	glUseProgram(program);
 	
-	CATransform3D camera = CATransform3DMakeTranslation(pan.x, 0, pan.y);
-	camera = CATransform3DRotate(camera, -1, 1, 0, 0);
-	camera = CATransform3DRotate(camera, -.5, 0, 0, 1);
+	CATransform3D camera = CATransform3DIdentity;
+	camera = CATransform3DRotate(camera, cameraRot.x, 1, 0, 0);
+	camera = CATransform3DRotate(camera, cameraRot.y, 0, 0, 1);
+	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
 	
 	for(something = -5; something < 5; something+= 1) {
 		CATransform3D modelview = CATransform3DMakeTranslation(something, ((int)something)%2, 0);
@@ -110,7 +114,7 @@ enum {
 		
 		
 		// Update attribute values
-		glVertexAttribPointer(ATTRIB_VERTEX, 2, GL_FLOAT, 0, 0, squareVertices);
+		glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, 0, 0, squareVertices);
 		glEnableVertexAttribArray(ATTRIB_VERTEX);
 		glVertexAttribPointer(ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, 0, squareColors);
 		glEnableVertexAttribArray(ATTRIB_COLOR);
@@ -345,7 +349,17 @@ enum {
 
 - (void)pan:(CGSize)diff;
 {
-	pan.x += diff.width/300.;
-	pan.y += diff.height/300.;
+	float s = sinf(-cameraRot.x);
+	float c = cosf(-cameraRot.x);
+	
+	diff = CGSizeMake(
+		diff.width*c - diff.height*s,
+		diff.width*s + diff.height*c
+	);
+	
+	diff = CGSizeMake(diff.width/300., diff.height/300.);
+
+	pan.x -= diff.width;
+	pan.y -= diff.height;
 }
 @end

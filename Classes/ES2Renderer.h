@@ -26,6 +26,7 @@
     GLuint program;
 		
 		CGPoint pan;
+		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
 }
 
