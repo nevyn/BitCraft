@@ -46,7 +46,7 @@ enum {
 			return nil;
 		}
 		
-		cameraRot = CGPointMake(-0.65, -0.65);
+		cameraRot = CGPointMake(-1.25, -0.65);
 		
 		// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
 		glGenFramebuffers(1, &defaultFramebuffer);
@@ -349,8 +349,8 @@ enum {
 
 - (void)pan:(CGSize)diff;
 {
-	float s = sinf(-cameraRot.x);
-	float c = cosf(-cameraRot.x);
+	float s = sinf(-cameraRot.y);
+	float c = cosf(-cameraRot.y);
 	
 	diff = CGSizeMake(
 		diff.width*c - diff.height*s,
