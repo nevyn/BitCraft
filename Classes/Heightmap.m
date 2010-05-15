@@ -7,6 +7,7 @@
 //
 
 #import "Heightmap.h"
+#import "CATransform3DAdditions.h"
 
 static inline float frand() {
 	return (rand()%10000)/10000.;
@@ -22,6 +23,7 @@ static inline float frand() {
 	h = image.size.height;
 	pc = w*h;
   vc = (w-1)*(h-1)*6;
+  res = r;
   
 	
 	verts = calloc(pc, sizeof(Vertex));
@@ -33,7 +35,7 @@ static inline float frand() {
   // Setup data
 	for(int y = 0; y < h; y++) {
 		for(int x = 0; x < w; x++) {
-    	GLfloat d = frand()*0.3;
+    	GLfloat d = frand()*0.05;
     	verts[y*w+x] = (Vertex){x*r, y*r, d};
       normals[y*w+x] = (Vertex){0,1,0};
       colors[y*w+x] = (Color){1-d, 1-d, 1-d, 1};
@@ -51,8 +53,8 @@ static inline float frand() {
     	indices[c++] = (y+1)*w+x;
       
       indices[c++] = y*w+x+1;
-      indices[c++] = (y+1)*w+x;
       indices[c++] = (y+1)*w+x+1;
+      indices[c++] = (y+1)*w+x;
     }
 	}
 	
@@ -69,6 +71,14 @@ static inline float frand() {
 
 -(void)renderWithOptions:(RenderOptions *)options;
 {
+  CATransform3D mvp = options.modelViewProjectionMatrix;
+  glUniformMatrix4fv([options.shaderProgram uniformNamed:@"mvp"], 1, GL_FALSE, (float*)&mvp);
+  
+  CATransform3D normalMatrix = options.modelViewMatrix;
+  normalMatrix = CATransform3DInvert(normalMatrix);
+  normalMatrix = CATransform3DTranspose(normalMatrix);
+  glUniformMatrix4fv([options.shaderProgram uniformNamed:@"normalMatrix"], 1, GL_FALSE, (float*)&normalMatrix);
+
   // Update attribute values
   NSInteger vertex    = [options.shaderProgram attributeNamed:@"position"];
   NSInteger color     = [options.shaderProgram attributeNamed:@"color"];
@@ -99,5 +109,10 @@ static inline float frand() {
   
   glDrawElements(GL_TRIANGLES, vc, GL_UNSIGNED_SHORT, indices);
 
+}
+
+-(CGSize)sizeInUnits;
+{
+	return CGSizeMake(w*res, h*res);
 }
 @end

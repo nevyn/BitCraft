@@ -7,7 +7,7 @@
 //
 
 #import "Entity.h"
-
+#import "CATransform3DAdditions.h"
 
 @implementation Entity
 
@@ -43,15 +43,17 @@
 
 -(void)renderWithOptions:(RenderOptions *)options;
 {
-  CATransform3D old_mv = options.modelViewMatrix;
-  CATransform3D mv = CATransform3DConcat(old_mv, matrix);
-  options.modelViewMatrix = mv;
+  options.modelViewMatrix = matrix;
+  
+  CATransform3D normal = matrix;
+  normal = CATransform3DInvert(normal);
+  normal = CATransform3DTranspose(normal);
+  glUniformMatrix4fv([options.shaderProgram uniformNamed:@"normalMatrix"], 1, GL_FALSE, (float*)&normal);
   
   CATransform3D mvp = options.modelViewProjectionMatrix;
   glUniformMatrix4fv([options.shaderProgram uniformNamed:@"mvp"], 1, GL_FALSE, (float*)&mvp);
   
   [mesh renderWithOptions:options];
-  options.modelViewMatrix = old_mv;
 }
 
 @end

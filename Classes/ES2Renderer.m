@@ -102,6 +102,8 @@ enum {
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
 	
 	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
+
+	[terraintex apply];
 	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
 	
 	static float foo = 0.0;
@@ -112,20 +114,15 @@ enum {
   renderOptions.viewMatrix = camera;
   renderOptions.projectionMatrix = perspectiveMatrix;
   renderOptions.shaderProgram = shaderProgram;
-  
+  renderOptions.modelViewMatrix = CATransform3DMakeTranslation(
+  	-heightmap.sizeInUnits.width/2., 
+    -heightmap.sizeInUnits.height/2.,
+    0.
+  );
   [heightmap renderWithOptions:renderOptions];
 	
 	for(float something = -5; something < 5; something+= 1) {
-		CATransform3D modelview = CATransform3DIdentity;
-		
-		CATransform3D normal = modelview;
-		normal = CATransform3DInvert(normal);
-		normal = CATransform3DTranspose(normal);
-		glUniformMatrix4fv(uniforms[UNIFORM_NORMALMATRIX], 1, GL_FALSE, (float*)&normal);
-    
-    renderOptions.modelViewMatrix = modelview;
-		
-		[terraintex apply];
+    renderOptions.modelViewMatrix = CATransform3DIdentity;
 		
     Vector4 *pos = [Vector4 vectorWithX:something y:((int)something)%2 z:0 w:1];
     sak.position = pos;
