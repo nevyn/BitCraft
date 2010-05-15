@@ -10,6 +10,7 @@
 #import <OpenGLES/ES2/glext.h>
 #import <OpenGLES/EAGL.h>
 #import <QuartzCore/QuartzCore.h>
+#import "Texture2D.h"
 
 @interface ES2Renderer : NSObject
 {
@@ -28,6 +29,8 @@
 		CGPoint pan;
 		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
+		
+		Texture2D *heightmap;
 }
 
 - (void)render;
