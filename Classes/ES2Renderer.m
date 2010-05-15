@@ -8,7 +8,7 @@
 
 #import "ES2Renderer.h"
 #import "CATransform3DAdditions.h"
-
+#import "RenderOptions.h"
 
 
 // uniform index
@@ -60,6 +60,8 @@ enum {
 		glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+    
+    sak = [[Entity alloc] init];
 	}
 	
 	return self;
@@ -67,37 +69,6 @@ enum {
 
 - (void)render
 {
-	// Replace the implementation of this method to do your own custom drawing
-	
-	static const GLfloat squareVertices[] = {
-		-0.2f, -0.2f, 0., //bl
-		0.2f, -0.2f, 0., //br
-		-0.2f,  0.2f, 0., //tl
-		0.2f,  0.2f, 0. //tr
-	};
-	
-	static const GLubyte squareColors[] = {
-		255, 255,   128, 255,
-		255, 255,   128, 255,
-		255, 255,   128, 255,
-		255, 255,   128, 255,
-	};
-	
-	static const GLfloat squareTexcoord[] = {
-		0, 1,
-		1, 1,
-		0, 0,
-		1, 0
-	};
-	
-	static const GLfloat squareNormals[] = {
-		0, 1, 0,
-		0, 1, 0,
-		0, 1, 0,
-		0, 1, 0
-	};
-	
-	
 	// This application only creates a single context which is already set current at this point.
 	// This call is redundant, but needed if dealing with multiple contexts.
 	[EAGLContext setCurrentContext:context];
@@ -124,52 +95,32 @@ enum {
 	
 	static float foo = 0.0;
 	foo += 0.025;
+  
+  RenderOptions *renderOptions = [[RenderOptions alloc] init];
+  
+  renderOptions.viewMatrix = camera;
+  renderOptions.projectionMatrix = perspectiveMatrix;
 	
 	for(float something = -5; something < 5; something+= 1) {
 		CATransform3D modelview = CATransform3DIdentity;
-		modelview = CATransform3DTranslate(modelview, something, ((int)something)%2, 0);
-		//modelview = CATransform3DRotate(modelview, foo, ((int)something)%2?1:-1, 0, 0);
 		
 		CATransform3D normal = modelview;
 		normal = CATransform3DInvert(normal);
 		normal = CATransform3DTranspose(normal);
 		glUniformMatrix4fv(uniforms[UNIFORM_NORMALMATRIX], 1, GL_FALSE, (float*)&normal);
-		
-		CATransform3D mvp = CATransform3DIdentity;
-		mvp = CATransform3DConcat(mvp, modelview);
-		mvp = CATransform3DConcat(mvp, camera);
-		mvp = CATransform3DConcat(mvp, perspectiveMatrix);
-	
-		glUniformMatrix4fv(uniforms[UNIFORM_MVP], 1, GL_FALSE, (float*)&mvp);
+    
+    renderOptions.modelViewMatrix = modelview;
+    renderOptions.shaderProgram = shaderProgram;
 		
 		[heightmap apply];
 		
-		// Update attribute values
-		glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, 0, 0, squareVertices);
-		glEnableVertexAttribArray(ATTRIB_VERTEX);
-		glVertexAttribPointer(ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, 0, squareColors);
-		glEnableVertexAttribArray(ATTRIB_COLOR);
-		glVertexAttribPointer(ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, 0, squareTexcoord);
-		glEnableVertexAttribArray(ATTRIB_TEXCOORD);
-		glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, 0, 0, squareNormals);
-		glEnableVertexAttribArray(ATTRIB_NORMAL);
-
-		// Validate program before drawing. This is a good check, but only really necessary in a debug build.
-		// DEBUG macro must be defined in your debug configurations if that's not already the case.
-#if defined(DEBUG)
-    ;
-		if (![shaderProgram validate])
-		{
-			NSLog(@"Failed to validate program");
-			return;
-		}
-#endif
-		
-		// Draw
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		
+    Vector4 *pos = [Vector4 vectorWithX:something y:((int)something)%2 z:0 w:1];
+    sak.position = pos;
+    [sak renderWithOptions:renderOptions];
 	}
-	
+  
+  [renderOptions release];
+
 	// This application only creates a single color renderbuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple renderbuffers.
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
@@ -188,23 +139,20 @@ enum {
   [shaderProgram addShader:fragShader];
   [fragShader release];
   
-
-  [shaderProgram bindAttribute:@"position" to:ATTRIB_VERTEX];
-  [shaderProgram bindAttribute:@"color" to:ATTRIB_COLOR];
-  [shaderProgram bindAttribute:@"texCoord" to:ATTRIB_TEXCOORD];
-  [shaderProgram bindAttribute:@"normal" to:ATTRIB_NORMAL];
-  
   [shaderProgram link];
+  [shaderProgram defineAttribute:@"position"];
+  [shaderProgram defineAttribute:@"color"];
+  [shaderProgram defineAttribute:@"texCoord"];
+  [shaderProgram defineAttribute:@"normal"];
+  
   
   uniforms[UNIFORM_MVP]           = [shaderProgram defineUniform:@"mvp"];
   uniforms[UNIFORM_NORMALMATRIX]  = [shaderProgram defineUniform:@"normalMatrix"];
   uniforms[UNIFORM_LIGHTDIR]      = [shaderProgram defineUniform:@"lightDir"];
   
   [shaderProgram validate];
-
-
-	
-	return TRUE;
+  
+  return TRUE;
 }
 
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer

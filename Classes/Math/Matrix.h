@@ -97,6 +97,9 @@ typedef enum {
 
 - (Vector4*)vectorByMultiplyingWithVector:(Vector4*)rhs;
 
+-(Vector4*)vectorWithRow:(NSUInteger)row;
+-(Vector4*)vectorWithColumn:(NSUInteger)column;
+
 //- (id)concatenated:(id)rhs;
 //- (id)transposed;
 

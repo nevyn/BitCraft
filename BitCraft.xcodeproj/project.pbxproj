@@ -22,6 +22,8 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		216F00F5119E2D360030C892 /* Entity.m in Sources */ = {isa = PBXBuildFile; fileRef = 216F00F4119E2D360030C892 /* Entity.m */; };
+		216F015D119EBBC90030C892 /* RenderOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 216F015C119EBBC90030C892 /* RenderOptions.m */; };
+		216F022D119EC73D0030C892 /* QuadMesh.m in Sources */ = {isa = PBXBuildFile; fileRef = 216F022C119EC73D0030C892 /* QuadMesh.m */; };
 		21960537119E0D2A0049CF65 /* Shader.m in Sources */ = {isa = PBXBuildFile; fileRef = 2196052E119E0D2A0049CF65 /* Shader.m */; };
 		21960538119E0D2A0049CF65 /* ShaderAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 21960530119E0D2A0049CF65 /* ShaderAttribute.m */; };
 		21960539119E0D2A0049CF65 /* ShaderProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 21960532119E0D2A0049CF65 /* ShaderProgram.m */; };
@@ -62,6 +64,10 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		216F00F3119E2D360030C892 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		216F00F4119E2D360030C892 /* Entity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Entity.m; sourceTree = "<group>"; };
+		216F015B119EBBC90030C892 /* RenderOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderOptions.h; sourceTree = "<group>"; };
+		216F015C119EBBC90030C892 /* RenderOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenderOptions.m; sourceTree = "<group>"; };
+		216F022B119EC73D0030C892 /* QuadMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuadMesh.h; sourceTree = "<group>"; };
+		216F022C119EC73D0030C892 /* QuadMesh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuadMesh.m; sourceTree = "<group>"; };
 		2196052D119E0D2A0049CF65 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
 		2196052E119E0D2A0049CF65 /* Shader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shader.m; sourceTree = "<group>"; };
 		2196052F119E0D2A0049CF65 /* ShaderAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderAttribute.h; sourceTree = "<group>"; };
@@ -154,6 +160,10 @@
 			children = (
 				216F00F3119E2D360030C892 /* Entity.h */,
 				216F00F4119E2D360030C892 /* Entity.m */,
+				216F015B119EBBC90030C892 /* RenderOptions.h */,
+				216F015C119EBBC90030C892 /* RenderOptions.m */,
+				216F022B119EC73D0030C892 /* QuadMesh.h */,
+				216F022C119EC73D0030C892 /* QuadMesh.m */,
 			);
 			name = stuff;
 			sourceTree = "<group>";
@@ -302,6 +312,8 @@
 				05D87007119E2D5D004BA8F5 /* Vector2.m in Sources */,
 				05D87008119E2D5D004BA8F5 /* Vector3.m in Sources */,
 				05D87009119E2D5D004BA8F5 /* Vector4.m in Sources */,
+				216F015D119EBBC90030C892 /* RenderOptions.m in Sources */,
+				216F022D119EC73D0030C892 /* QuadMesh.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

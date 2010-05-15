@@ -12,7 +12,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "Texture2D.h"
 
-#import "ShaderProgram.h"
+#import "Entity.h"
 
 @interface ES2Renderer : NSObject
 {
@@ -26,13 +26,15 @@
     // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
     GLuint defaultFramebuffer, colorRenderbuffer;
 
-    GLuint program;
+
 		
 		CGPoint pan;
 		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
     ShaderProgram *shaderProgram;
 		Texture2D *heightmap;
+  
+    Entity *sak;
 }
 
 - (void)render;

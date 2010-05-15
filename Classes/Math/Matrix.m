@@ -286,6 +286,16 @@ static Matrix4 *identity;
 							  w:M41 * rhs.x + M42 * rhs.y + M43 * rhs.z + M44 * rhs.w];
 }
 
+-(Vector4*)vectorWithRow:(NSUInteger)row;
+{
+  return [Vector4 vectorWithX:v[4 * row + 0] y:v[4 * row + 1] z:v[4 * row + 2] w:v[4 * row + 3]];
+}
+
+-(Vector4*)vectorWithColumn:(NSUInteger)column;
+{
+  return [Vector4 vectorWithX:v[column + 0*4] y:v[column + 1*4] z:v[column + 2*4] w:v[column + 3*4]];
+}
+
 - (NSString*)description;
 {
 	return [NSString stringWithFormat:@"(%.2f, %.2f, %.2f %.2f; %.2f, %.2f, %.2f %.2f; %.2f, %.2f, %.2f %.2f; %.2f, %.2f, %.2f %.2f)",
