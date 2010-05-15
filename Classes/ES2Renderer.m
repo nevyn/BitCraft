@@ -120,12 +120,16 @@ enum {
 	camera = CATransform3DRotate(camera, cameraRot.y, 0, 0, 1);
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
 	
-	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0, 0, 1);
+	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
 	glUniform1i(uniforms[UNIFORM_SAMPLER], heightmap.name);
+	
+	static float foo = 0.0;
+	foo += 0.025;
 	
 	for(float something = -5; something < 5; something+= 1) {
 		CATransform3D modelview = CATransform3DIdentity;
 		modelview = CATransform3DTranslate(modelview, something, ((int)something)%2, 0);
+		//modelview = CATransform3DRotate(modelview, foo, ((int)something)%2?1:-1, 0, 0);
 		
 		CATransform3D normal = modelview;
 		normal = CATransform3DInvert(normal);
