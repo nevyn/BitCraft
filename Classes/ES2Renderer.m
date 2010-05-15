@@ -9,6 +9,8 @@
 #import "ES2Renderer.h"
 #import "CATransform3DAdditions.h"
 
+
+
 // uniform index
 enum {
 	UNIFORM_MVP,
@@ -31,9 +33,6 @@ enum {
 
 @interface ES2Renderer (PrivateMethods)
 - (BOOL)loadShaders;
-- (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file;
-- (BOOL)linkProgram:(GLuint)prog;
-- (BOOL)validateProgram:(GLuint)prog;
 @end
 
 @implementation ES2Renderer
@@ -111,7 +110,7 @@ enum {
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	
 	// Use shader program
-	glUseProgram(program);
+  [shaderProgram use];
 	
 	CATransform3D camera = CATransform3DIdentity;
 	camera = CATransform3DRotate(camera, cameraRot.x, 1, 0, 0);
@@ -146,13 +145,14 @@ enum {
 		glEnableVertexAttribArray(ATTRIB_TEXCOORD);
 		glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, 0, 0, squareNormals);
 		glEnableVertexAttribArray(ATTRIB_NORMAL);
-		
+
 		// Validate program before drawing. This is a good check, but only really necessary in a debug build.
 		// DEBUG macro must be defined in your debug configurations if that's not already the case.
 #if defined(DEBUG)
-		if (![self validateProgram:program])
+    ;
+		if (![shaderProgram validate])
 		{
-			NSLog(@"Failed to validate program: %d", program);
+			NSLog(@"Failed to validate program");
 			return;
 		}
 #endif
@@ -168,161 +168,33 @@ enum {
 	[context presentRenderbuffer:GL_RENDERBUFFER];
 }
 
-- (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file
-{
-	GLint status;
-	const GLchar *source;
-	
-	source = (GLchar *)[[NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil] UTF8String];
-	if (!source)
-	{
-		NSLog(@"Failed to load vertex shader");
-		return FALSE;
-	}
-	
-	*shader = glCreateShader(type);
-	glShaderSource(*shader, 1, &source, NULL);
-	glCompileShader(*shader);
-	
-#if defined(DEBUG)
-	GLint logLength;
-	glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
-	if (logLength > 0)
-	{
-		GLchar *log = (GLchar *)malloc(logLength);
-		glGetShaderInfoLog(*shader, logLength, &logLength, log);
-		NSLog(@"Shader compile log:\n%s", log);
-		free(log);
-	}
-#endif
-	
-	glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
-	if (status == 0)
-	{
-		glDeleteShader(*shader);
-		return FALSE;
-	}
-	
-	return TRUE;
-}
-
-- (BOOL)linkProgram:(GLuint)prog
-{
-	GLint status;
-	
-	glLinkProgram(prog);
-	
-#if defined(DEBUG)
-	GLint logLength;
-	glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-	if (logLength > 0)
-	{
-		GLchar *log = (GLchar *)malloc(logLength);
-		glGetProgramInfoLog(prog, logLength, &logLength, log);
-		NSLog(@"Program link log:\n%s", log);
-		free(log);
-	}
-#endif
-	
-	glGetProgramiv(prog, GL_LINK_STATUS, &status);
-	if (status == 0)
-		return FALSE;
-	
-	return TRUE;
-}
-
-- (BOOL)validateProgram:(GLuint)prog
-{
-	GLint logLength, status;
-	
-	glValidateProgram(prog);
-	glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-	if (logLength > 0)
-	{
-		GLchar *log = (GLchar *)malloc(logLength);
-		glGetProgramInfoLog(prog, logLength, &logLength, log);
-		NSLog(@"Program validate log:\n%s", log);
-		free(log);
-	}
-	
-	glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
-	if (status == 0)
-		return FALSE;
-	
-	return TRUE;
-}
-
 - (BOOL)loadShaders
 {
-	GLuint vertShader, fragShader;
-	NSString *vertShaderPathname, *fragShaderPathname;
-	
-	// Create shader program
-	program = glCreateProgram();
-	
-	// Create and compile vertex shader
-	vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"vsh"];
-	if (![self compileShader:&vertShader type:GL_VERTEX_SHADER file:vertShaderPathname])
-	{
-		NSLog(@"Failed to compile vertex shader");
-		return FALSE;
-	}
-	
-	// Create and compile fragment shader
-	fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"];
-	if (![self compileShader:&fragShader type:GL_FRAGMENT_SHADER file:fragShaderPathname])
-	{
-		NSLog(@"Failed to compile fragment shader");
-		return FALSE;
-	}
-	
-	// Attach vertex shader to program
-	glAttachShader(program, vertShader);
-	
-	// Attach fragment shader to program
-	glAttachShader(program, fragShader);
-	
-	// Bind attribute locations
-	// this needs to be done prior to linking
-	glBindAttribLocation(program, ATTRIB_VERTEX, "position");
-	glBindAttribLocation(program, ATTRIB_COLOR, "color");
-	glBindAttribLocation(program, ATTRIB_TEXCOORD, "texCoord");
-	glBindAttribLocation(program, ATTRIB_NORMAL, "normal");
-	
-	// Link program
-	if (![self linkProgram:program])
-	{
-		NSLog(@"Failed to link program: %d", program);
-		
-		if (vertShader)
-		{
-			glDeleteShader(vertShader);
-			vertShader = 0;
-		}
-		if (fragShader)
-		{
-			glDeleteShader(fragShader);
-			fragShader = 0;
-		}
-		if (program)
-		{
-			glDeleteProgram(program);
-			program = 0;
-		}
-		
-		return FALSE;
-	}
-	
-	// Get uniform locations
-	uniforms[UNIFORM_MVP] = glGetUniformLocation(program, "mvp");
-	uniforms[UNIFORM_NORMALMATRIX] = glGetUniformLocation(program, "normalMatrix");
-	uniforms[UNIFORM_LIGHTDIR] = glGetUniformLocation(program, "lightDir");
-	
-	// Release vertex and fragment shaders
-	if (vertShader)
-		glDeleteShader(vertShader);
-	if (fragShader)
-		glDeleteShader(fragShader);
+  shaderProgram = [[ShaderProgram alloc] init];
+  
+  Shader *vertShader = [[Shader alloc] initVertexShaderFromFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"vsh"]];
+  [shaderProgram addShader:vertShader];
+  [vertShader release];
+  
+  Shader *fragShader = [[Shader alloc] initFragmentShaderFromFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"]];
+  [shaderProgram addShader:fragShader];
+  [fragShader release];
+  
+
+  [shaderProgram bindAttribute:@"position" to:ATTRIB_VERTEX];
+  [shaderProgram bindAttribute:@"color" to:ATTRIB_COLOR];
+  [shaderProgram bindAttribute:@"texCoord" to:ATTRIB_TEXCOORD];
+  [shaderProgram bindAttribute:@"normal" to:ATTRIB_NORMAL];
+  
+  [shaderProgram link];
+  
+  uniforms[UNIFORM_MVP]           = [shaderProgram defineUniform:@"mvp"];
+  uniforms[UNIFORM_NORMALMATRIX]  = [shaderProgram defineUniform:@"normalMatrix"];
+  uniforms[UNIFORM_LIGHTDIR]      = [shaderProgram defineUniform:@"lightDir"];
+  
+  [shaderProgram validate];
+
+
 	
 	return TRUE;
 }
@@ -363,12 +235,8 @@ enum {
 		colorRenderbuffer = 0;
 	}
 	
-	if (program)
-	{
-		glDeleteProgram(program);
-		program = 0;
-	}
-	
+  [shaderProgram release];
+  
 	// Tear down context
 	if ([EAGLContext currentContext] == context)
 		[EAGLContext setCurrentContext:nil];

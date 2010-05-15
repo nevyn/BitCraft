@@ -13,6 +13,12 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		21960537119E0D2A0049CF65 /* Shader.m in Sources */ = {isa = PBXBuildFile; fileRef = 2196052E119E0D2A0049CF65 /* Shader.m */; };
+		21960538119E0D2A0049CF65 /* ShaderAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 21960530119E0D2A0049CF65 /* ShaderAttribute.m */; };
+		21960539119E0D2A0049CF65 /* ShaderProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 21960532119E0D2A0049CF65 /* ShaderProgram.m */; };
+		2196053A119E0D2A0049CF65 /* ShaderUniform.m in Sources */ = {isa = PBXBuildFile; fileRef = 21960534119E0D2A0049CF65 /* ShaderUniform.m */; };
+		2196053B119E0D2A0049CF65 /* ShaderVariable.m in Sources */ = {isa = PBXBuildFile; fileRef = 21960536119E0D2A0049CF65 /* ShaderVariable.m */; };
+		21BA3217119E22A400ED682A /* example in Resources */ = {isa = PBXBuildFile; fileRef = 21BA3216119E22A400ED682A /* example */; };
 		2514C27310084DB100A42282 /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2514C27010084DB100A42282 /* ES2Renderer.m */; };
 		2514C27B10084DCA00A42282 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 2514C27910084DCA00A42282 /* Shader.fsh */; };
 		2514C27C10084DCA00A42282 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 2514C27A10084DCA00A42282 /* Shader.vsh */; };
@@ -31,6 +37,17 @@
 		1D3623250D0F684500981E51 /* BitCraftAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitCraftAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* BitCraft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BitCraft.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		2196052D119E0D2A0049CF65 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
+		2196052E119E0D2A0049CF65 /* Shader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shader.m; sourceTree = "<group>"; };
+		2196052F119E0D2A0049CF65 /* ShaderAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderAttribute.h; sourceTree = "<group>"; };
+		21960530119E0D2A0049CF65 /* ShaderAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderAttribute.m; sourceTree = "<group>"; };
+		21960531119E0D2A0049CF65 /* ShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProgram.h; sourceTree = "<group>"; };
+		21960532119E0D2A0049CF65 /* ShaderProgram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderProgram.m; sourceTree = "<group>"; };
+		21960533119E0D2A0049CF65 /* ShaderUniform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderUniform.h; sourceTree = "<group>"; };
+		21960534119E0D2A0049CF65 /* ShaderUniform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderUniform.m; sourceTree = "<group>"; };
+		21960535119E0D2A0049CF65 /* ShaderVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderVariable.h; sourceTree = "<group>"; };
+		21960536119E0D2A0049CF65 /* ShaderVariable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderVariable.m; sourceTree = "<group>"; };
+		21BA3216119E22A400ED682A /* example */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = example; sourceTree = "<group>"; };
 		2514C26F10084DB100A42282 /* ES2Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES2Renderer.h; sourceTree = "<group>"; };
 		2514C27010084DB100A42282 /* ES2Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES2Renderer.m; sourceTree = "<group>"; };
 		2514C27910084DCA00A42282 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = Shader.fsh; path = Shaders/Shader.fsh; sourceTree = "<group>"; };
@@ -64,6 +81,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				21960525119E0D200049CF65 /* Shader */,
 				2514C26F10084DB100A42282 /* ES2Renderer.h */,
 				2514C27010084DB100A42282 /* ES2Renderer.m */,
 				28FD14FC0DC6FC130079059D /* EAGLView.h */,
@@ -82,6 +100,24 @@
 				1D6058910D05DD3D006BFB54 /* BitCraft.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		21960525119E0D200049CF65 /* Shader */ = {
+			isa = PBXGroup;
+			children = (
+				2196052D119E0D2A0049CF65 /* Shader.h */,
+				2196052E119E0D2A0049CF65 /* Shader.m */,
+				21960531119E0D2A0049CF65 /* ShaderProgram.h */,
+				21960532119E0D2A0049CF65 /* ShaderProgram.m */,
+				21960535119E0D2A0049CF65 /* ShaderVariable.h */,
+				21960536119E0D2A0049CF65 /* ShaderVariable.m */,
+				21960533119E0D2A0049CF65 /* ShaderUniform.h */,
+				21960534119E0D2A0049CF65 /* ShaderUniform.m */,
+				2196052F119E0D2A0049CF65 /* ShaderAttribute.h */,
+				21960530119E0D2A0049CF65 /* ShaderAttribute.m */,
+				21BA3216119E22A400ED682A /* example */,
+			);
+			name = Shader;
 			sourceTree = "<group>";
 		};
 		2514C27610084DB600A42282 /* Shaders */ = {
@@ -181,6 +217,7 @@
 				2514C27B10084DCA00A42282 /* Shader.fsh in Resources */,
 				2514C27C10084DCA00A42282 /* Shader.vsh in Resources */,
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
+				21BA3217119E22A400ED682A /* example in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +233,11 @@
 				28FD14FE0DC6FC130079059D /* EAGLView.m in Sources */,
 				2514C27310084DB100A42282 /* ES2Renderer.m in Sources */,
 				05D86D1D119DB95E004BA8F5 /* CATransform3DAdditions.m in Sources */,
+				21960537119E0D2A0049CF65 /* Shader.m in Sources */,
+				21960538119E0D2A0049CF65 /* ShaderAttribute.m in Sources */,
+				21960539119E0D2A0049CF65 /* ShaderProgram.m in Sources */,
+				2196053A119E0D2A0049CF65 /* ShaderUniform.m in Sources */,
+				2196053B119E0D2A0049CF65 /* ShaderVariable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

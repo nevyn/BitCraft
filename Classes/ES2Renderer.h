@@ -11,6 +11,8 @@
 #import <OpenGLES/EAGL.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import "ShaderProgram.h"
+
 @interface ES2Renderer : NSObject
 {
 @private
@@ -28,6 +30,8 @@
 		CGPoint pan;
 		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
+  
+  ShaderProgram *shaderProgram;
 }
 
 - (void)render;
