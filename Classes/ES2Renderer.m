@@ -50,6 +50,8 @@ enum {
 			return nil;
 		}
 		
+		heightmap = [Texture2D textureNamed:@"heightmap.png"];
+		
 		cameraRot = CGPointMake(-1.25, -0.65);
 		
 		// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
@@ -118,6 +120,7 @@ enum {
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
 	
 	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0, 0, 1);
+	glUniform1i(uniforms[UNIFORM_SAMPLER], heightmap.name);
 	
 	for(float something = -5; something < 5; something+= 1) {
 		CATransform3D modelview = CATransform3DIdentity;
@@ -135,6 +138,7 @@ enum {
 	
 		glUniformMatrix4fv(uniforms[UNIFORM_MVP], 1, GL_FALSE, (float*)&mvp);
 		
+		[heightmap apply];
 		
 		// Update attribute values
 		glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, 0, 0, squareVertices);

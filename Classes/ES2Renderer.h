@@ -10,6 +10,7 @@
 #import <OpenGLES/ES2/glext.h>
 #import <OpenGLES/EAGL.h>
 #import <QuartzCore/QuartzCore.h>
+#import "Texture2D.h"
 
 #import "ShaderProgram.h"
 
@@ -30,8 +31,8 @@
 		CGPoint pan;
 		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
-  
-  ShaderProgram *shaderProgram;
+    ShaderProgram *shaderProgram;
+		Texture2D *heightmap;
 }
 
 - (void)render;
