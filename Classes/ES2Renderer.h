@@ -13,6 +13,7 @@
 #import "Texture2D.h"
 
 #import "Entity.h"
+#import "Heightmap.h"
 
 @interface ES2Renderer : NSObject
 {
@@ -24,7 +25,7 @@
   GLint backingHeight;
 
   // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
-  GLuint defaultFramebuffer, colorRenderbuffer;
+  GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;
   
   float zoom;
   CGPoint pan;
@@ -32,8 +33,9 @@
   CATransform3D perspectiveMatrix;
   ShaderProgram *shaderProgram;
   ShaderProgram *pickingShader;
-
-  Texture2D *heightmap;
+  
+  Heightmap *heightmap;
+  Texture2D *terraintex;
 
   NSMutableArray *saker;
   

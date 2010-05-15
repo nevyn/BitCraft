@@ -27,6 +27,7 @@ enum {
 	ATTRIB_COLOR,
 	ATTRIB_TEXCOORD,
 	ATTRIB_NORMAL,
+  ATTRIB_INDEX,
 	NUM_ATTRIBUTES
 };
 
@@ -54,17 +55,23 @@ struct rgbacolor {
 			return nil;
 		}
 		
-		heightmap = [Texture2D textureNamed:@"heightmap.png"];
+		terraintex = [[Texture2D textureNamed:@"heightmap.png"] retain];
+    heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
+                                      resolution:0.1];
 		
 		cameraRot = CGPointMake(-1.25, -0.65);
 		
 		// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
 		glGenFramebuffers(1, &defaultFramebuffer);
-		glGenRenderbuffers(1, &colorRenderbuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
+        
+		glGenRenderbuffers(1, &colorRenderbuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
-    
+
+    glGenRenderbuffers(1, &depthRenderbuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
     
     saker = [[NSMutableArray alloc] init];
     for(float something = -5; something < 5; something+= 1) {
@@ -80,6 +87,7 @@ struct rgbacolor {
 
 - (void)render
 {
+
 	// This application only creates a single context which is already set current at this point.
 	// This call is redundant, but needed if dealing with multiple contexts.
 	[EAGLContext setCurrentContext:context];
@@ -87,10 +95,19 @@ struct rgbacolor {
 	// This application only creates a single default framebuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple framebuffers.
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	glViewport(0, 0, backingWidth, backingHeight);
-	//glDepthRangef(0.1, 1000.);
+	glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
 	
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  RenderOptions *renderOptions = [[RenderOptions alloc] init];
+  renderOptions.picking = touchPoints != nil;
+  
+  if(renderOptions.picking)
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  else
+    glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
+  
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	
   
@@ -99,9 +116,10 @@ struct rgbacolor {
 	camera = CATransform3DRotate(camera, cameraRot.y, 0, 0, 1);
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, zoom);
   camera.m44 = 1+zoom;
-  
-  RenderOptions *renderOptions = [[RenderOptions alloc] init];
-  renderOptions.picking = touchPoints != nil;
+	
+	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
+	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
+	
 
   renderOptions.viewport = CGRectMake(0, 0, backingWidth, backingHeight);
   renderOptions.viewMatrix = camera;
@@ -116,12 +134,13 @@ struct rgbacolor {
   [renderOptions.shaderProgram use];
   
 	
-	
 	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
-	glUniform1i(uniforms[UNIFORM_SAMPLER], heightmap.name);
+	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
+  
+  [heightmap renderWithOptions:renderOptions];
 	
   CATransform3D modelview = CATransform3DIdentity;
-		
+  
   CATransform3D normal = modelview;
   normal = CATransform3DInvert(normal);
   normal = CATransform3DTranspose(normal);
@@ -130,10 +149,8 @@ struct rgbacolor {
   renderOptions.modelViewMatrix = modelview;
   renderOptions.shaderProgram = shaderProgram;
   
-		
-  if(!renderOptions.picking)
-    [heightmap apply];
-		
+  [terraintex apply];
+  
   for(Entity *sak in saker)
     [sak renderWithOptions:renderOptions];
   
@@ -185,11 +202,12 @@ struct rgbacolor {
   [shaderProgram addShader:fragShader];
   [fragShader release];
   
+
+  [shaderProgram bindAttribute:@"position" to:ATTRIB_VERTEX];
+  [shaderProgram bindAttribute:@"color" to:ATTRIB_COLOR];
+  [shaderProgram bindAttribute:@"texCoord" to:ATTRIB_TEXCOORD];
+  [shaderProgram bindAttribute:@"normal" to:ATTRIB_NORMAL];
   [shaderProgram link];
-  [shaderProgram defineAttribute:@"position"];
-  [shaderProgram defineAttribute:@"color"];
-  [shaderProgram defineAttribute:@"texCoord"];
-  [shaderProgram defineAttribute:@"normal"];
   
   
   uniforms[UNIFORM_MVP]           = [shaderProgram defineUniform:@"mvp"];
@@ -233,6 +251,9 @@ struct rgbacolor {
 	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
+  
+  glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, backingWidth, backingHeight);
 	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{

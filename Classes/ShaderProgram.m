@@ -72,7 +72,7 @@
 -(NSInteger)attributeNamed:(NSString *)name
 {
   NSInteger location = [[attributes valueForKey:name] integerValue];
-  if(!location){
+  if(location == -1){
     location = [self defineAttribute:name];
   }
   return location;
