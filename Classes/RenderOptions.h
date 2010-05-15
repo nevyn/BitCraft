@@ -18,6 +18,10 @@
   CATransform3D projectionMatrix;
   
   ShaderProgram *shaderProgram;
+  
+  CGRect viewport;
+  
+  BOOL picking;
 }
 
 @property (nonatomic, assign) CATransform3D modelViewMatrix;
@@ -26,5 +30,9 @@
 @property (nonatomic, readonly) CATransform3D modelViewProjectionMatrix;
 
 @property (nonatomic, retain) ShaderProgram *shaderProgram;
+
+@property (nonatomic, assign) CGRect viewport;
+
+@property (nonatomic, assign) BOOL picking;
 
 @end

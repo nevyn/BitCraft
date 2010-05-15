@@ -17,29 +17,36 @@
 @interface ES2Renderer : NSObject
 {
 @private
-    EAGLContext *context;
+  EAGLContext *context;
 
-    // The pixel dimensions of the CAEAGLLayer
-    GLint backingWidth;
-    GLint backingHeight;
+  // The pixel dimensions of the CAEAGLLayer
+  GLint backingWidth;
+  GLint backingHeight;
 
-    // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
-    GLuint defaultFramebuffer, colorRenderbuffer;
-
-
-		
-		CGPoint pan;
-		CGPoint cameraRot;
-		CATransform3D perspectiveMatrix;
-    ShaderProgram *shaderProgram;
-		Texture2D *heightmap;
+  // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
+  GLuint defaultFramebuffer, colorRenderbuffer;
   
-    Entity *sak;
+  float zoom;
+  CGPoint pan;
+  CGPoint cameraRot;
+  CATransform3D perspectiveMatrix;
+  ShaderProgram *shaderProgram;
+  ShaderProgram *pickingShader;
+
+  Texture2D *heightmap;
+
+  NSMutableArray *saker;
+  
+  NSMutableArray *touchPoints;
+  NSMutableArray *touchedObjects;
 }
 
 - (void)render;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 
 - (void)pan:(CGSize)diff;
+-(void)zoom:(float)diff;
+
+-(void)touched:(CGPoint)point;
 @end
 

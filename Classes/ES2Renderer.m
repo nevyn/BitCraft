@@ -30,12 +30,16 @@ enum {
 	NUM_ATTRIBUTES
 };
 
+struct rgbacolor {
+  GLubyte r, g, b, a;
+};
 
 @interface ES2Renderer (PrivateMethods)
 - (BOOL)loadShaders;
 @end
 
 @implementation ES2Renderer
+
 
 // Create an OpenGL ES 2.0 context
 - (id)init
@@ -61,7 +65,14 @@ enum {
 		glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
     
-    sak = [[Entity alloc] init];
+    
+    saker = [[NSMutableArray alloc] init];
+    for(float something = -5; something < 5; something+= 1) {
+      Entity *sak = [[Entity alloc] init];
+      Vector4 *pos = [Vector4 vectorWithX:something y:((int)something)%2 z:0 w:1];
+      sak.position = pos;
+      [saker addObject:sak];
+    }
 	}
 	
 	return self;
@@ -79,52 +90,87 @@ enum {
 	glViewport(0, 0, backingWidth, backingHeight);
 	//glDepthRangef(0.1, 1000.);
 	
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	
-	// Use shader program
-  [shaderProgram use];
-	
-	CATransform3D camera = CATransform3DIdentity;
+  
+  CATransform3D camera = CATransform3DIdentity;
 	camera = CATransform3DRotate(camera, cameraRot.x, 1, 0, 0);
 	camera = CATransform3DRotate(camera, cameraRot.y, 0, 0, 1);
-	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
+	camera = CATransform3DTranslate(camera, pan.x, pan.y, zoom);
+  camera.m44 = 1+zoom;
+  
+  RenderOptions *renderOptions = [[RenderOptions alloc] init];
+  renderOptions.picking = touchPoints != nil;
+
+  renderOptions.viewport = CGRectMake(0, 0, backingWidth, backingHeight);
+  renderOptions.viewMatrix = camera;
+  renderOptions.projectionMatrix = perspectiveMatrix;
+
+  if(renderOptions.picking)
+    renderOptions.shaderProgram = pickingShader;
+  else
+    renderOptions.shaderProgram = shaderProgram;
+  
+	// Use shader program
+  [renderOptions.shaderProgram use];
+  
+	
 	
 	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
 	glUniform1i(uniforms[UNIFORM_SAMPLER], heightmap.name);
 	
-	static float foo = 0.0;
-	foo += 0.025;
+  CATransform3D modelview = CATransform3DIdentity;
+		
+  CATransform3D normal = modelview;
+  normal = CATransform3DInvert(normal);
+  normal = CATransform3DTranspose(normal);
+  glUniformMatrix4fv(uniforms[UNIFORM_NORMALMATRIX], 1, GL_FALSE, (float*)&normal);
   
-  RenderOptions *renderOptions = [[RenderOptions alloc] init];
+  renderOptions.modelViewMatrix = modelview;
+  renderOptions.shaderProgram = shaderProgram;
   
-  renderOptions.viewMatrix = camera;
-  renderOptions.projectionMatrix = perspectiveMatrix;
-	
-	for(float something = -5; something < 5; something+= 1) {
-		CATransform3D modelview = CATransform3DIdentity;
 		
-		CATransform3D normal = modelview;
-		normal = CATransform3DInvert(normal);
-		normal = CATransform3DTranspose(normal);
-		glUniformMatrix4fv(uniforms[UNIFORM_NORMALMATRIX], 1, GL_FALSE, (float*)&normal);
-    
-    renderOptions.modelViewMatrix = modelview;
-    renderOptions.shaderProgram = shaderProgram;
+  if(!renderOptions.picking)
+    [heightmap apply];
 		
-		[heightmap apply];
-		
-    Vector4 *pos = [Vector4 vectorWithX:something y:((int)something)%2 z:0 w:1];
-    sak.position = pos;
+  for(Entity *sak in saker)
     [sak renderWithOptions:renderOptions];
-	}
   
-  [renderOptions release];
+  if(renderOptions.picking){
+    [touchedObjects release];
+    touchedObjects = [[NSMutableArray alloc] init];
+    
+    for(NSValue *touch in touchPoints){
+      CGPoint point = [touch CGPointValue];
+      GLuint pickedPointer;
+      glReadPixels(point.x, backingHeight - point.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pickedPointer);
+      if(pickedPointer > 0){
+        Entity *obj = (id)pickedPointer;
+        [touchedObjects addObject:obj];
+      }
+    }
+    
+    [touchPoints release];
+    touchPoints = nil;
+  }
 
 	// This application only creates a single color renderbuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple renderbuffers.
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-	[context presentRenderbuffer:GL_RENDERBUFFER];
+  
+  glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
+  if(!renderOptions.picking){
+    [context presentRenderbuffer:GL_RENDERBUFFER];
+  }
+  
+  [renderOptions release];
+}
+
+-(void)touched:(CGPoint)point;
+{
+  if(!touchPoints)
+    touchPoints = [[NSMutableArray alloc] init]; 
+  [touchPoints addObject:[NSValue valueWithCGPoint:point]];
 }
 
 - (BOOL)loadShaders
@@ -152,6 +198,31 @@ enum {
   
   [shaderProgram validate];
   
+  
+
+  pickingShader = [[ShaderProgram alloc] init];
+  
+  vertShader = [[Shader alloc] initVertexShaderFromFile:[[NSBundle mainBundle] pathForResource:@"picking" ofType:@"vsh"]];
+  [pickingShader addShader:vertShader];
+  [vertShader release];
+  
+  fragShader = [[Shader alloc] initFragmentShaderFromFile:[[NSBundle mainBundle] pathForResource:@"picking" ofType:@"fsh"]];
+  [pickingShader addShader:fragShader];
+  [fragShader release];
+  
+  [pickingShader link];
+  [pickingShader defineAttribute:@"position"];
+  [pickingShader defineAttribute:@"color"];
+  [pickingShader defineAttribute:@"texCoord"];
+  [pickingShader defineAttribute:@"normal"];
+  
+  
+  uniforms[UNIFORM_MVP]           = [pickingShader defineUniform:@"mvp"];
+  uniforms[UNIFORM_NORMALMATRIX]  = [pickingShader defineUniform:@"normalMatrix"];
+  uniforms[UNIFORM_LIGHTDIR]      = [pickingShader defineUniform:@"lightDir"];
+  
+  [pickingShader validate];
+  
   return TRUE;
 }
 
@@ -178,6 +249,10 @@ enum {
 
 - (void)dealloc
 {
+  
+  [saker release];
+  
+  
 	// Tear down GL
 	if (defaultFramebuffer)
 	{
@@ -199,7 +274,7 @@ enum {
 	
 	[context release];
 	context = nil;
-	
+  
 	[super dealloc];
 }
 
@@ -217,5 +292,11 @@ enum {
 
 	pan.x -= diff.width;
 	pan.y -= diff.height;
+}
+
+-(void)zoom:(float)diff;
+{
+  zoom += diff * 0.01;
+  NSLog(@"zoom: %f", zoom);
 }
 @end

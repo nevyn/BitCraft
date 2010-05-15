@@ -53,6 +53,8 @@
 		NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
 		if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
 			displayLinkSupported = TRUE;
+    
+    [self setMultipleTouchEnabled:YES];
 	}
 	
 	return self;
@@ -141,15 +143,45 @@
 	[super dealloc];
 }
 
--(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 {
 	UITouch *t = [touches anyObject];
 	CGPoint p = [t locationInView:self];
-	if(oldP.x && oldP.y) {
-		CGSize sz = CGSizeMake(oldP.x-p.x, p.y-oldP.y);
-		[renderer pan:sz];
-	}
-	oldP = p;
+  
+  [renderer touched:p];
+}
+
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
+{
+  if(touches.count == 2){
+    UITouch *t1 = [[touches allObjects] objectAtIndex:0];
+    UITouch *t2 = [[touches allObjects] objectAtIndex:1];
+    
+    CGPoint p1 = [t1 locationInView:self];
+    CGPoint p2 = [t2 locationInView:self];
+    
+    CGPoint pp1 = [t1 previousLocationInView:self];
+    CGPoint pp2 = [t2 previousLocationInView:self];
+    
+    CGPoint diffNow = CGPointMake(p1.x - p2.x, p1.y - p2.y);
+    CGPoint diffThen = CGPointMake(pp1.x - pp2.x, pp1.y - pp2.y);
+    
+    float distNow = sqrt(diffNow.x * diffNow.x + diffNow.y * diffNow.y);
+    float distThen = sqrt(diffThen.x * diffThen.x + diffThen.y * diffThen.y);
+    
+    float diff = distNow - distThen;
+    NSLog(@"zoomdist: %f", diff);
+    [renderer zoom:diff];
+    
+  } else {
+    UITouch *t = [touches anyObject];
+    CGPoint p = [t locationInView:self];
+    if(oldP.x && oldP.y) {
+      CGSize sz = CGSizeMake(oldP.x-p.x, p.y-oldP.y);
+      [renderer pan:sz];
+    }
+    oldP = p;
+  }
 }
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
 {

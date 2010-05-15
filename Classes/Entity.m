@@ -7,10 +7,11 @@
 //
 
 #import "Entity.h"
-
+#import "PickingMesh.h"
 
 @implementation Entity
 
+@synthesize pickable;
 
 -(id)init
 {
@@ -19,6 +20,8 @@
   matrix = CATransform3DIdentity;
   
   mesh = [[QuadMesh alloc] init];
+  
+  pickable = YES;
 
   return self;
 }
@@ -46,11 +49,17 @@
   CATransform3D old_mv = options.modelViewMatrix;
   CATransform3D mv = CATransform3DConcat(old_mv, matrix);
   options.modelViewMatrix = mv;
-  
   CATransform3D mvp = options.modelViewProjectionMatrix;
   glUniformMatrix4fv([options.shaderProgram uniformNamed:@"mvp"], 1, GL_FALSE, (float*)&mvp);
+
+  if(options.picking && pickable){
+    PickingMesh *pm = [[PickingMesh alloc] init];
+    pm.index = (GLuint)self;
+    [pm renderWithOptions:options];
+  } else {
+    [mesh renderWithOptions:options];
+  }
   
-  [mesh renderWithOptions:options];
   options.modelViewMatrix = old_mv;
 }
 
