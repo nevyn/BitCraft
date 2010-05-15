@@ -8,6 +8,7 @@
 
 #import "Heightmap.h"
 #import "CATransform3DAdditions.h"
+#import "UIImage+getPixels.h"
 
 static inline float frand() {
 	return (rand()%10000)/10000.;
@@ -15,7 +16,7 @@ static inline float frand() {
 
 
 @implementation Heightmap
--(id)initWithImage:(UIImage*)image resolution:(float)r;
+-(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth;
 {
 	if(![super init]) return nil;
 
@@ -24,6 +25,7 @@ static inline float frand() {
 	pc = w*h;
   vc = (w-1)*(h-1)*6;
   res = r;
+  d = depth;
   
 	
 	verts = calloc(pc, sizeof(Vertex));
@@ -32,16 +34,22 @@ static inline float frand() {
 	normals = calloc(pc, sizeof(Vertex));
   indices = calloc(vc, sizeof(GLushort));
   
+  
+  unsigned char *pixels = calloc(pc, sizeof(char));
+  [image bc_getPixels:pixels];
+  
   // Setup data
 	for(int y = 0; y < h; y++) {
 		for(int x = 0; x < w; x++) {
-    	GLfloat d = frand()*0.05;
-    	verts[y*w+x] = (Vertex){x*r, y*r, d};
+    	GLfloat depth = (pixels[(y*w+x)]/255.)*d;
+    	verts[y*w+x] = (Vertex){x*r, y*r, depth};
       normals[y*w+x] = (Vertex){0,1,0};
-      colors[y*w+x] = (Color){1-d, 1-d, 1-d, 1};
+      colors[y*w+x] = (Color){1,1,1,1};
       texcoords[y*w+x] = (Texcoord){x/(float)w, y/(float)h};
     }
   }
+  
+  free(pixels);
 
 	
   // Setup indices
@@ -88,7 +96,7 @@ static inline float frand() {
   
   glVertexAttribPointer(vertex, 3, GL_FLOAT, 0, 0, verts);
   glEnableVertexAttribArray(vertex);
-  glVertexAttribPointer(color, 4, GL_UNSIGNED_BYTE, 1, 0, colors);
+  glVertexAttribPointer(color, 4, GL_FLOAT, 1, 0, colors);
   glEnableVertexAttribArray(color);
   glVertexAttribPointer(texcoord, 2, GL_FLOAT, 0, 0, texcoords);
   glEnableVertexAttribArray(texcoord);

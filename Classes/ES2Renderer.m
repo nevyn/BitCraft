@@ -51,9 +51,10 @@ enum {
 			return nil;
 		}
 		
-		terraintex = [[Texture2D textureNamed:@"heightmap.png"] retain];
+		terraintex = [[Texture2D textureNamed:@"tex.jpg"] retain];
     heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
-                                      resolution:0.1];
+                                      resolution:0.1
+                                      depth:0.5];
 		
 		cameraRot = CGPointMake(-1.25, -0.65);
 		

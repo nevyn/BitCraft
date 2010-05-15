@@ -26,9 +26,9 @@ typedef struct {
   Texcoord *texcoords;
   GLushort *indices;
   int w, h, pc, vc;
-  float res;
+  float res, d;
 }
--(id)initWithImage:(UIImage*)image resolution:(float)r;
+-(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth;
 -(void)renderWithOptions:(RenderOptions *)options;
 
 -(CGSize)sizeInUnits;
