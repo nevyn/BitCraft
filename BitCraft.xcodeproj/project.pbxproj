@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		05D86D1D119DB95E004BA8F5 /* CATransform3DAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D86D1C119DB95E004BA8F5 /* CATransform3DAdditions.m */; };
 		05D86E82119E039F004BA8F5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05D86E81119E039F004BA8F5 /* CoreGraphics.framework */; };
-		05D86F7C119E24E5004BA8F5 /* Texture2D.mm in Sources */ = {isa = PBXBuildFile; fileRef = 05D86F7B119E24E5004BA8F5 /* Texture2D.mm */; };
 		05D86F80119E2637004BA8F5 /* heightmap.png in Resources */ = {isa = PBXBuildFile; fileRef = 05D86F7F119E2637004BA8F5 /* heightmap.png */; };
+		05D86FCB119E2A01004BA8F5 /* Texture2D.mm in Sources */ = {isa = PBXBuildFile; fileRef = 05D86FCA119E2A01004BA8F5 /* Texture2D.mm */; };
 		1D3623260D0F684500981E51 /* BitCraftAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* BitCraftAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -28,9 +28,9 @@
 		05D86D1B119DB95E004BA8F5 /* CATransform3DAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATransform3DAdditions.h; sourceTree = "<group>"; };
 		05D86D1C119DB95E004BA8F5 /* CATransform3DAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATransform3DAdditions.m; sourceTree = "<group>"; };
 		05D86E81119E039F004BA8F5 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		05D86F7A119E24E5004BA8F5 /* Texture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture2D.h; path = ../../Dropbox/voxyn/tex2d/Texture2D.h; sourceTree = SOURCE_ROOT; };
-		05D86F7B119E24E5004BA8F5 /* Texture2D.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Texture2D.mm; path = ../../Dropbox/voxyn/tex2d/Texture2D.mm; sourceTree = SOURCE_ROOT; };
 		05D86F7F119E2637004BA8F5 /* heightmap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heightmap.png; sourceTree = "<group>"; };
+		05D86FC9119E2A01004BA8F5 /* Texture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture2D.h; sourceTree = "<group>"; };
+		05D86FCA119E2A01004BA8F5 /* Texture2D.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Texture2D.mm; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* BitCraftAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitCraftAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* BitCraftAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitCraftAppDelegate.m; sourceTree = "<group>"; };
@@ -77,8 +77,8 @@
 				1D3623250D0F684500981E51 /* BitCraftAppDelegate.m */,
 				05D86D1B119DB95E004BA8F5 /* CATransform3DAdditions.h */,
 				05D86D1C119DB95E004BA8F5 /* CATransform3DAdditions.m */,
-				05D86F7A119E24E5004BA8F5 /* Texture2D.h */,
-				05D86F7B119E24E5004BA8F5 /* Texture2D.mm */,
+				05D86FC9119E2A01004BA8F5 /* Texture2D.h */,
+				05D86FCA119E2A01004BA8F5 /* Texture2D.mm */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -205,7 +205,7 @@
 				28FD14FE0DC6FC130079059D /* EAGLView.m in Sources */,
 				2514C27310084DB100A42282 /* ES2Renderer.m in Sources */,
 				05D86D1D119DB95E004BA8F5 /* CATransform3DAdditions.m in Sources */,
-				05D86F7C119E24E5004BA8F5 /* Texture2D.mm in Sources */,
+				05D86FCB119E2A01004BA8F5 /* Texture2D.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
