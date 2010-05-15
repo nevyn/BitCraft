@@ -12,6 +12,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import "Texture2D.h"
 
+#import "ShaderProgram.h"
+
 @interface ES2Renderer : NSObject
 {
 @private
@@ -29,7 +31,7 @@
 		CGPoint pan;
 		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
-		
+    ShaderProgram *shaderProgram;
 		Texture2D *heightmap;
 }
 
