@@ -12,6 +12,9 @@
 // uniform index
 enum {
 	UNIFORM_MVP,
+	UNIFORM_NORMALMATRIX,
+	UNIFORM_LIGHTDIR,
+	UNIFORM_SAMPLER,
 	NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
@@ -20,6 +23,8 @@ GLint uniforms[NUM_UNIFORMS];
 enum {
 	ATTRIB_VERTEX,
 	ATTRIB_COLOR,
+	ATTRIB_TEXCOORD,
+	ATTRIB_NORMAL,
 	NUM_ATTRIBUTES
 };
 
@@ -71,13 +76,26 @@ enum {
 	};
 	
 	static const GLubyte squareColors[] = {
-		255, 0,   0, 255,
-		255, 0,   0, 255,
-		255, 0,   0, 255,
-		255, 0,   0, 255,
+		255, 255,   128, 255,
+		255, 255,   128, 255,
+		255, 255,   128, 255,
+		255, 255,   128, 255,
 	};
 	
-	float something = 0;
+	static const GLfloat squareTexcoord[] = {
+		0, 1,
+		1, 1,
+		0, 0,
+		1, 0
+	};
+	
+	static const GLfloat squareNormals[] = {
+		0, 1, 0,
+		0, 1, 0,
+		0, 1, 0,
+		0, 1, 0
+	};
+	
 	
 	// This application only creates a single context which is already set current at this point.
 	// This call is redundant, but needed if dealing with multiple contexts.
@@ -100,17 +118,23 @@ enum {
 	camera = CATransform3DRotate(camera, cameraRot.y, 0, 0, 1);
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
 	
-	for(something = -5; something < 5; something+= 1) {
-		CATransform3D modelview = CATransform3DMakeTranslation(something, ((int)something)%2, 0);
+	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0, 0, 1);
+	
+	for(float something = -5; something < 5; something+= 1) {
+		CATransform3D modelview = CATransform3DIdentity;
+		modelview = CATransform3DTranslate(modelview, something, ((int)something)%2, 0);
+		
+		CATransform3D normal = modelview;
+		normal = CATransform3DInvert(normal);
+		normal = CATransform3DTranspose(normal);
+		glUniformMatrix4fv(uniforms[UNIFORM_NORMALMATRIX], 1, GL_FALSE, (float*)&normal);
 		
 		CATransform3D mvp = CATransform3DIdentity;
 		mvp = CATransform3DConcat(mvp, modelview);
 		mvp = CATransform3DConcat(mvp, camera);
 		mvp = CATransform3DConcat(mvp, perspectiveMatrix);
 	
-		mvp = CATransform3DTranspose(mvp);
-		// Update uniform value
-		glUniformMatrix4fv(uniforms[UNIFORM_MVP], 1, FALSE, (float*)&mvp);
+		glUniformMatrix4fv(uniforms[UNIFORM_MVP], 1, GL_FALSE, (float*)&mvp);
 		
 		
 		// Update attribute values
@@ -118,6 +142,10 @@ enum {
 		glEnableVertexAttribArray(ATTRIB_VERTEX);
 		glVertexAttribPointer(ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, 0, squareColors);
 		glEnableVertexAttribArray(ATTRIB_COLOR);
+		glVertexAttribPointer(ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, 0, squareTexcoord);
+		glEnableVertexAttribArray(ATTRIB_TEXCOORD);
+		glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, 0, 0, squareNormals);
+		glEnableVertexAttribArray(ATTRIB_NORMAL);
 		
 		// Validate program before drawing. This is a good check, but only really necessary in a debug build.
 		// DEBUG macro must be defined in your debug configurations if that's not already the case.
@@ -258,6 +286,8 @@ enum {
 	// this needs to be done prior to linking
 	glBindAttribLocation(program, ATTRIB_VERTEX, "position");
 	glBindAttribLocation(program, ATTRIB_COLOR, "color");
+	glBindAttribLocation(program, ATTRIB_TEXCOORD, "texCoord");
+	glBindAttribLocation(program, ATTRIB_NORMAL, "normal");
 	
 	// Link program
 	if (![self linkProgram:program])
@@ -285,6 +315,8 @@ enum {
 	
 	// Get uniform locations
 	uniforms[UNIFORM_MVP] = glGetUniformLocation(program, "mvp");
+	uniforms[UNIFORM_NORMALMATRIX] = glGetUniformLocation(program, "normalMatrix");
+	uniforms[UNIFORM_LIGHTDIR] = glGetUniformLocation(program, "lightDir");
 	
 	// Release vertex and fragment shaders
 	if (vertShader)
