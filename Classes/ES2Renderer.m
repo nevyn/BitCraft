@@ -59,10 +59,15 @@ enum {
 		
 		// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
 		glGenFramebuffers(1, &defaultFramebuffer);
-		glGenRenderbuffers(1, &colorRenderbuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
+        
+		glGenRenderbuffers(1, &colorRenderbuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+    
+  	glGenRenderbuffers(1, &depthRenderbuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
     
     sak = [[Entity alloc] init];
 	}
@@ -80,10 +85,12 @@ enum {
 	// This application only creates a single default framebuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple framebuffers.
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	glViewport(0, 0, backingWidth, backingHeight);
 	glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
 	
-	glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	
 	// Use shader program
@@ -145,16 +152,12 @@ enum {
   [shaderProgram addShader:fragShader];
   [fragShader release];
   
-  [shaderProgram link];
-/*  [shaderProgram bindAttribute:@"position" to:ATTRIB_VERTEX];
+
+  [shaderProgram bindAttribute:@"position" to:ATTRIB_VERTEX];
   [shaderProgram bindAttribute:@"color" to:ATTRIB_COLOR];
   [shaderProgram bindAttribute:@"texCoord" to:ATTRIB_TEXCOORD];
-  [shaderProgram bindAttribute:@"normal" to:ATTRIB_NORMAL];*/
-   [shaderProgram defineAttribute:@"position"];
-   [shaderProgram defineAttribute:@"color"];
-   [shaderProgram defineAttribute:@"texCoord"];
-   [shaderProgram defineAttribute:@"normal"];
-
+  [shaderProgram bindAttribute:@"normal" to:ATTRIB_NORMAL];
+  [shaderProgram link];
   
   
   uniforms[UNIFORM_MVP]           = [shaderProgram defineUniform:@"mvp"];
@@ -173,6 +176,9 @@ enum {
 	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
+  
+  glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, backingWidth, backingHeight);
 	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
