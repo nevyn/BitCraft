@@ -13,6 +13,7 @@
 #import "Texture2D.h"
 
 #import "Entity.h"
+#import "Heightmap.h"
 
 @interface ES2Renderer : NSObject
 {
@@ -32,9 +33,9 @@
 		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
     ShaderProgram *shaderProgram;
-		Texture2D *heightmap;
-  
     Entity *sak;
+    Heightmap *heightmap;
+		Texture2D *terraintex;
 }
 
 - (void)render;

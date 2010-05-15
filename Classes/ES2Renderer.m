@@ -27,6 +27,7 @@ enum {
 	ATTRIB_COLOR,
 	ATTRIB_TEXCOORD,
 	ATTRIB_NORMAL,
+  ATTRIB_INDEX,
 	NUM_ATTRIBUTES
 };
 
@@ -50,7 +51,9 @@ enum {
 			return nil;
 		}
 		
-		heightmap = [Texture2D textureNamed:@"heightmap.png"];
+		terraintex = [[Texture2D textureNamed:@"heightmap.png"] retain];
+    heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
+                                      resolution:0.1];
 		
 		cameraRot = CGPointMake(-1.25, -0.65);
 		
@@ -69,6 +72,7 @@ enum {
 
 - (void)render
 {
+
 	// This application only creates a single context which is already set current at this point.
 	// This call is redundant, but needed if dealing with multiple contexts.
 	[EAGLContext setCurrentContext:context];
@@ -77,9 +81,9 @@ enum {
 	// This call is redundant, but needed if dealing with multiple framebuffers.
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 	glViewport(0, 0, backingWidth, backingHeight);
-	//glDepthRangef(0.1, 1000.);
+	glEnable(GL_CULL_FACE);
 	
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	
 	// Use shader program
@@ -91,7 +95,7 @@ enum {
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
 	
 	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
-	glUniform1i(uniforms[UNIFORM_SAMPLER], heightmap.name);
+	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
 	
 	static float foo = 0.0;
 	foo += 0.025;
@@ -100,6 +104,9 @@ enum {
   
   renderOptions.viewMatrix = camera;
   renderOptions.projectionMatrix = perspectiveMatrix;
+  renderOptions.shaderProgram = shaderProgram;
+  
+  [heightmap renderWithOptions:renderOptions];
 	
 	for(float something = -5; something < 5; something+= 1) {
 		CATransform3D modelview = CATransform3DIdentity;
@@ -110,9 +117,8 @@ enum {
 		glUniformMatrix4fv(uniforms[UNIFORM_NORMALMATRIX], 1, GL_FALSE, (float*)&normal);
     
     renderOptions.modelViewMatrix = modelview;
-    renderOptions.shaderProgram = shaderProgram;
 		
-		[heightmap apply];
+		[terraintex apply];
 		
     Vector4 *pos = [Vector4 vectorWithX:something y:((int)something)%2 z:0 w:1];
     sak.position = pos;
@@ -140,10 +146,15 @@ enum {
   [fragShader release];
   
   [shaderProgram link];
-  [shaderProgram defineAttribute:@"position"];
-  [shaderProgram defineAttribute:@"color"];
-  [shaderProgram defineAttribute:@"texCoord"];
-  [shaderProgram defineAttribute:@"normal"];
+/*  [shaderProgram bindAttribute:@"position" to:ATTRIB_VERTEX];
+  [shaderProgram bindAttribute:@"color" to:ATTRIB_COLOR];
+  [shaderProgram bindAttribute:@"texCoord" to:ATTRIB_TEXCOORD];
+  [shaderProgram bindAttribute:@"normal" to:ATTRIB_NORMAL];*/
+   [shaderProgram defineAttribute:@"position"];
+   [shaderProgram defineAttribute:@"color"];
+   [shaderProgram defineAttribute:@"texCoord"];
+   [shaderProgram defineAttribute:@"normal"];
+
   
   
   uniforms[UNIFORM_MVP]           = [shaderProgram defineUniform:@"mvp"];

@@ -14,7 +14,7 @@
 
 -(void)renderWithOptions:(RenderOptions *)options;
 {
-  static const GLfloat squareVertices[] = {
+	static const GLfloat squareVertices[] = {
 		-0.2f, -0.2f, 0., //bl
 		0.2f, -0.2f, 0., //br
 		-0.2f,  0.2f, 0., //tl
@@ -22,10 +22,10 @@
 	};
 	
 	static const GLubyte squareColors[] = {
-		255, 255,   128, 255,
-		255, 255,   128, 255,
-		255, 255,   128, 255,
-		255, 255,   128, 255,
+		255, 0,   0, 255,
+		0, 255,   0, 255,
+		0, 0,   255, 255,
+		255, 255,   255, 255,
 	};
 	
 	static const GLfloat squareTexcoord[] = {
@@ -59,7 +59,6 @@
   glEnableVertexAttribArray(normal);
   
 #if defined(DEBUG)
-  ;
   if (![options.shaderProgram validate])
   {
     NSLog(@"Failed to validate program");

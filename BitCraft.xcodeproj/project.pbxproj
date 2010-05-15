@@ -17,6 +17,7 @@
 		05D87007119E2D5D004BA8F5 /* Vector2.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D86FFF119E2D5D004BA8F5 /* Vector2.m */; };
 		05D87008119E2D5D004BA8F5 /* Vector3.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D87001119E2D5D004BA8F5 /* Vector3.m */; };
 		05D87009119E2D5D004BA8F5 /* Vector4.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D87003119E2D5D004BA8F5 /* Vector4.m */; };
+		05D87010119E2FB2004BA8F5 /* Heightmap.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D8700F119E2FB2004BA8F5 /* Heightmap.m */; };
 		1D3623260D0F684500981E51 /* BitCraftAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* BitCraftAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -57,6 +58,8 @@
 		05D87001119E2D5D004BA8F5 /* Vector3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vector3.m; sourceTree = "<group>"; };
 		05D87002119E2D5D004BA8F5 /* Vector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector4.h; sourceTree = "<group>"; };
 		05D87003119E2D5D004BA8F5 /* Vector4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Vector4.m; sourceTree = "<group>"; };
+		05D8700E119E2FB2004BA8F5 /* Heightmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Heightmap.h; sourceTree = "<group>"; };
+		05D8700F119E2FB2004BA8F5 /* Heightmap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Heightmap.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* BitCraftAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitCraftAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* BitCraftAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitCraftAppDelegate.m; sourceTree = "<group>"; };
@@ -143,6 +146,8 @@
 				05D86FC9119E2A01004BA8F5 /* Texture2D.h */,
 				05D86FCA119E2A01004BA8F5 /* Texture2D.mm */,
 				05D86FF7119E2D5D004BA8F5 /* Math */,
+				05D8700E119E2FB2004BA8F5 /* Heightmap.h */,
+				05D8700F119E2FB2004BA8F5 /* Heightmap.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -314,6 +319,7 @@
 				05D87009119E2D5D004BA8F5 /* Vector4.m in Sources */,
 				216F015D119EBBC90030C892 /* RenderOptions.m in Sources */,
 				216F022D119EC73D0030C892 /* QuadMesh.m in Sources */,
+				05D87010119E2FB2004BA8F5 /* Heightmap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
