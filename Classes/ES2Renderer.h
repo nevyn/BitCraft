@@ -39,16 +39,18 @@
 
   NSMutableArray *saker;
   
-  NSMutableArray *touchPoints;
-  NSMutableArray *touchedObjects;
+  NSMutableDictionary *fingers;
+  NSMutableArray *newFingers;
 }
 
 - (void)render;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 
 - (void)pan:(CGSize)diff;
--(void)zoom:(float)diff;
+- (void)zoom:(float)diff;
 
--(void)touched:(CGPoint)point;
+- (void)finger:(id)touch touchedPoint:(CGPoint)point;
+- (void)finger:(id)touch releasedPoint:(CGPoint)point;
+- (void)finger:(id)touch movedToPoint:(CGPoint)point;
 @end
 

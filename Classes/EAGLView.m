@@ -145,10 +145,9 @@
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 {
-	UITouch *t = [touches anyObject];
-	CGPoint p = [t locationInView:self];
-  
-  [renderer touched:p];
+  for(UITouch *t in touches){
+    [renderer finger:t touchedPoint:[t locationInView:self]];
+  }
 }
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
@@ -182,13 +181,24 @@
     }
     oldP = p;
   }
+  
+  for(UITouch *t in touches){
+    [renderer finger:t movedToPoint:[t locationInView:self]];
+  }
 }
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
 {
 	oldP = CGPointZero;
+  
+  for(UITouch *t in touches){
+    [renderer finger:t releasedPoint:[t locationInView:self]];
+  }
 }
 -(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)evt;
 {
 	oldP = CGPointZero;
+  for(UITouch *t in touches){
+    [renderer finger:t releasedPoint:[t locationInView:self]];
+  }
 }
 @end

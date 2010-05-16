@@ -9,7 +9,7 @@
 #import "ES2Renderer.h"
 #import "CATransform3DAdditions.h"
 #import "RenderOptions.h"
-
+#import "Finger.h"
 
 // uniform index
 enum {
@@ -54,6 +54,8 @@ struct rgbacolor {
 			[self release];
 			return nil;
 		}
+    
+    fingers = [[NSMutableDictionary alloc] init];
 		
 		terraintex = [[Texture2D textureNamed:@"heightmap.png"] retain];
     heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
@@ -101,7 +103,7 @@ struct rgbacolor {
   glEnable(GL_DEPTH_TEST);
 	
   RenderOptions *renderOptions = [[RenderOptions alloc] init];
-  renderOptions.picking = touchPoints != nil;
+  renderOptions.picking = newFingers != nil;
   
   if(renderOptions.picking)
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -155,22 +157,54 @@ struct rgbacolor {
     [sak renderWithOptions:renderOptions];
   
   if(renderOptions.picking){
-    [touchedObjects release];
-    touchedObjects = [[NSMutableArray alloc] init];
-    
-    for(NSValue *touch in touchPoints){
-      CGPoint point = [touch CGPointValue];
+    for(Finger *finger in newFingers){
+      CGPoint point = finger.point;
       GLuint pickedPointer;
       glReadPixels(point.x, backingHeight - point.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pickedPointer);
       if(pickedPointer > 0){
         Entity *obj = (id)pickedPointer;
-        [touchedObjects addObject:obj];
+        finger.object = obj;
       }
     }
     
-    [touchPoints release];
-    touchPoints = nil;
+    [newFingers release];
+    newFingers = nil;
   }
+  
+  Finger *finger = [[fingers allValues] lastObject];
+  if(finger){
+    Entity *entity = finger.object;
+    
+    CGPoint point = finger.point;
+    point.y = backingHeight - point.y;
+    //AAAAAAAAAAARgh    
+ //   CATransform3D mm = CATransform3DConcat(renderOptions.projectionMatrix, renderOptions.viewMatrix);
+//    mm = renderOptions.projectionMatrix;
+//    CATransform3D m = CATransform3DInvert(mm);
+//    
+//    
+//    Vector4 *v = [Vector4 vectorWithX:(((point.x*2) / backingWidth) - 1)
+//                                    y:(((point.y*2) / backingHeight) - 1)
+//                                    z:0.0 w:1];
+//
+//    NSLog(@"pos: %.2f %.2f", v.x, v.y);
+////    Vector4 *v = [Vector4 vectorWithX:point.x 
+////                                    y:point.y
+////                                    z:0 w:1];
+//
+//    
+//    // Transform the screen space pick ray into 3D space
+//    Vector4 *rayDir = [Vector4 vectorWithX:v.x*m.m11 + v.y*m.m21 + v.z*m.m31 
+//                       y:v.x*m.m12 + v.y*m.m22 + v.z*m.m32 
+//                       z:v.x*m.m13 + v.y*m.m23 + v.z*m.m33 
+//                       w:1];
+//    Vector4 *rayOrigin = [Vector4 vectorWithX:m.m41 y:m.m42 z:m.m43 w:1];
+//    
+//    
+//    NSLog(@"hmm? %.2f %.2f %.2f %.2f", rayOrigin.x, rayOrigin.y, rayOrigin.z, rayOrigin.w);
+//    entity.position = [Vector4 vectorWithX:rayOrigin.x y:rayOrigin.y z:rayOrigin.z w:1];
+  }
+  
 
 	// This application only creates a single color renderbuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple renderbuffers.
@@ -183,63 +217,39 @@ struct rgbacolor {
   [renderOptions release];
 }
 
--(void)touched:(CGPoint)point;
+-(void)setupShader:(ShaderProgram*)shader shaderName:(NSString *)name
 {
-  if(!touchPoints)
-    touchPoints = [[NSMutableArray alloc] init]; 
-  [touchPoints addObject:[NSValue valueWithCGPoint:point]];
+  Shader *vertShader = [[Shader alloc] initVertexShaderFromFile:[[NSBundle mainBundle] pathForResource:name ofType:@"vsh"]];
+  [shader addShader:vertShader];
+  [vertShader release];
+  
+  Shader *fragShader = [[Shader alloc] initFragmentShaderFromFile:[[NSBundle mainBundle] pathForResource:name ofType:@"fsh"]];
+  [shader addShader:fragShader];
+  [fragShader release];
+  
+  
+  [shader bindAttribute:@"position" to:ATTRIB_VERTEX];
+  [shader bindAttribute:@"color" to:ATTRIB_COLOR];
+  [shader bindAttribute:@"texCoord" to:ATTRIB_TEXCOORD];
+  [shader bindAttribute:@"normal" to:ATTRIB_NORMAL];
+  [shader link];
+  
+  
+  uniforms[UNIFORM_MVP]           = [shader defineUniform:@"mvp"];
+  uniforms[UNIFORM_NORMALMATRIX]  = [shader defineUniform:@"normalMatrix"];
+  uniforms[UNIFORM_LIGHTDIR]      = [shader defineUniform:@"lightDir"];
+  
+  [shader validate];
 }
 
 - (BOOL)loadShaders
 {
   shaderProgram = [[ShaderProgram alloc] init];
   
-  Shader *vertShader = [[Shader alloc] initVertexShaderFromFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"vsh"]];
-  [shaderProgram addShader:vertShader];
-  [vertShader release];
-  
-  Shader *fragShader = [[Shader alloc] initFragmentShaderFromFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"]];
-  [shaderProgram addShader:fragShader];
-  [fragShader release];
-  
-
-  [shaderProgram bindAttribute:@"position" to:ATTRIB_VERTEX];
-  [shaderProgram bindAttribute:@"color" to:ATTRIB_COLOR];
-  [shaderProgram bindAttribute:@"texCoord" to:ATTRIB_TEXCOORD];
-  [shaderProgram bindAttribute:@"normal" to:ATTRIB_NORMAL];
-  [shaderProgram link];
-  
-  
-  uniforms[UNIFORM_MVP]           = [shaderProgram defineUniform:@"mvp"];
-  uniforms[UNIFORM_NORMALMATRIX]  = [shaderProgram defineUniform:@"normalMatrix"];
-  uniforms[UNIFORM_LIGHTDIR]      = [shaderProgram defineUniform:@"lightDir"];
-  
-  [shaderProgram validate];
-  
-  
+  [self setupShader:shaderProgram shaderName:@"Shader"];
 
   pickingShader = [[ShaderProgram alloc] init];
-  
-  vertShader = [[Shader alloc] initVertexShaderFromFile:[[NSBundle mainBundle] pathForResource:@"picking" ofType:@"vsh"]];
-  [pickingShader addShader:vertShader];
-  [vertShader release];
-  
-  fragShader = [[Shader alloc] initFragmentShaderFromFile:[[NSBundle mainBundle] pathForResource:@"picking" ofType:@"fsh"]];
-  [pickingShader addShader:fragShader];
-  [fragShader release];
-  
-  [pickingShader link];
-  [pickingShader defineAttribute:@"position"];
-  [pickingShader defineAttribute:@"color"];
-  [pickingShader defineAttribute:@"texCoord"];
-  [pickingShader defineAttribute:@"normal"];
-  
-  
-  uniforms[UNIFORM_MVP]           = [pickingShader defineUniform:@"mvp"];
-  uniforms[UNIFORM_NORMALMATRIX]  = [pickingShader defineUniform:@"normalMatrix"];
-  uniforms[UNIFORM_LIGHTDIR]      = [pickingShader defineUniform:@"lightDir"];
-  
-  [pickingShader validate];
+  [self setupShader:pickingShader shaderName:@"picking"];
   
   return TRUE;
 }
@@ -320,4 +330,43 @@ struct rgbacolor {
   zoom += diff * 0.01;
   NSLog(@"zoom: %f", zoom);
 }
+
+
+- (void)finger:(id)touch touchedPoint:(CGPoint)point;
+{
+  NSValue *touchValue = [NSValue valueWithPointer:touch];
+  Finger *finger = [fingers objectForKey:touchValue];
+  
+  if(!finger) {
+    finger = [[Finger alloc] init];
+    finger.point = point;
+    finger.oldPoint = point;
+    [fingers setObject:finger forKey:touchValue];
+    
+    if(!newFingers)
+      newFingers = [[NSMutableArray alloc] init];
+    [newFingers addObject:finger];
+  }
+  NSLog(@"fingers: %@", fingers);
+}
+
+- (void)finger:(id)touch releasedPoint:(CGPoint)point;
+{
+  NSValue *touchValue = [NSValue valueWithPointer:touch];
+  Finger *finger = [fingers objectForKey:touchValue];
+  
+  if(finger)
+    [newFingers removeObject:finger];
+  
+  [fingers removeObjectForKey:touchValue];
+  NSLog(@"fingers: %@", fingers);
+}
+
+- (void)finger:(id)touch movedToPoint:(CGPoint)point;
+{
+  Finger *finger = [fingers objectForKey:[NSValue valueWithPointer:touch]];
+  Entity *entity = finger.object;
+  NSLog(@"fingers: %@", fingers);
+}
+
 @end
