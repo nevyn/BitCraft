@@ -40,7 +40,7 @@ struct rgbacolor {
   terraintex = [[Texture2D textureNamed:@"tex.jpg"] retain];
   
   cameraRot = CGPointMake(-1.25, -0.65);
-  zoom = 1.0;
+  zoom = 3.0;
   
   // Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
   glGenFramebuffers(1, &defaultFramebuffer);
@@ -64,9 +64,10 @@ struct rgbacolor {
   }
   
  	Heightmap *heightmap = [[[Heightmap alloc] initWithImage:[UIImage imageNamed:@"land.png"] 
-                                               resolution:0.8
-                                                    depth:1.0
-                                                  texture:[Texture2D textureNamed:@"landtex.jpg"]] autorelease];
+                                                resolution:0.8
+                                                     depth:4
+                                                   texture:[Texture2D textureNamed:@"landtex.jpg"]
+                                                  texscale:1.] autorelease];
   Entity *sak = [[[Entity alloc] initWithRenderable:heightmap] autorelease];
   sak.position = [Vector4 vectorWithX:-heightmap.sizeInUnits.width/2.
                                     y:-heightmap.sizeInUnits.height/2.
@@ -77,9 +78,10 @@ struct rgbacolor {
   [saker addObject:sak];
   
   heightmap = [[[Heightmap alloc] initWithImage:[UIImage imageNamed:@"sea.png"] 
-                                    resolution:0.8
-                                         depth:1.0
-                                       texture:nil] autorelease];
+                                     resolution:0.8
+                                          depth:4
+                                        texture:nil
+                                       texscale:-1] autorelease];
   sak = [[[Entity alloc] initWithRenderable:heightmap] autorelease];
   sak.position = [Vector4 vectorWithX:-heightmap.sizeInUnits.width/2.
                                     y:-heightmap.sizeInUnits.height/2.

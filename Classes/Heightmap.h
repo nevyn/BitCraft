@@ -28,7 +28,11 @@ typedef struct {
   float res, d;
   Texture2D* tex;
 }
--(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth texture:(Texture2D*)texture;
+-(id)initWithImage:(UIImage*)image
+        resolution:(float)r
+             depth:(float)depth
+           texture:(Texture2D*)texture // nil means ocean colors
+          texscale:(float)texscale; // -1 means fill
 
 -(CGSize)sizeInUnits;
 @end

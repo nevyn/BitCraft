@@ -16,7 +16,11 @@ static inline float frand() {
 
 
 @implementation Heightmap
--(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth texture:(Texture2D*)texture;
+-(id)initWithImage:(UIImage*)image
+        resolution:(float)r
+             depth:(float)depth
+           texture:(Texture2D*)texture // nil means ocean colors
+          texscale:(float)texscale; // -1 means fill
 {
 	if(![super init]) return nil;
 
@@ -37,6 +41,9 @@ static inline float frand() {
 	normals = calloc(pc, sizeof(Vec3));
   indices = calloc(vc, sizeof(GLushort));
   
+  if(texscale == -1.)
+  	texscale = w;
+  
   
   unsigned char *pixels = calloc(pc, sizeof(char));
   [image bc_getPixels:pixels];
@@ -51,13 +58,13 @@ static inline float frand() {
 	      colors[y*w+x] = (Color){frand()*2., frand()*2., frand()*0.2, 0.8};
       else
       	colors[y*w+x] = (Color){1,1,1,1};
-      texcoords[y*w+x] = (Texcoord){x/(float)w, y/(float)h};
+      texcoords[y*w+x] = (Texcoord){x/texscale, y/texscale};
     }
   }
   free(pixels);
   
   // Setup normals
- 	for(int y = 0; y < h; y++) {
+ 	/*for(int y = 0; y < h; y++) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
 		for(int x = 0; x < w; x++) {
     	Vector3 *me = Vec3Wrap(verts[y*w+x]);
@@ -86,7 +93,7 @@ static inline float frand() {
       normals[y*w+x] = n.vec3;
 		}
   	[pool release];
-  }
+  }*/
 
 
 	
