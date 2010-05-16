@@ -44,6 +44,7 @@
 
 
   CGPoint debugPan;
+  NSTimeInterval startedAt;
 }
 
 - (void)render;

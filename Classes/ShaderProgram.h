@@ -19,6 +19,7 @@
   NSDictionary *uniforms;
   NSDictionary *attributes;
   NSInteger attribBase;
+  BOOL printedValidateLog;
 }
 
 @property (readonly) GLuint program;
@@ -28,6 +29,7 @@
 
 -(void)addShader:(Shader *)shader;
 -(NSInteger)defineUniform:(NSString *)name;
+-(BOOL)defineUniformIfAvailable:(NSString *)name;
 -(NSInteger)defineAttribute:(NSString *)name;
 -(NSInteger)bindAttribute:(NSString *)name to:(NSInteger)location;
 -(id)commonSetup;

@@ -63,17 +63,18 @@ struct rgbacolor {
   }
   
  	Heightmap *heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
-                                    resolution:0.1
-                                         depth:0.5];
+                                    resolution:0.8
+                                         depth:1.0];
   Entity *sak = [[[Entity alloc] initWithRenderable:heightmap] autorelease];
   sak.position = [Vector4 vectorWithX:-heightmap.sizeInUnits.width/2.
                                     y:-heightmap.sizeInUnits.height/2.
                                     z:-1
                                     w:1];
-  sak.shader = standardShader;
+  sak.shader = terrainShader;
   sak.pickable = NO;
   [saker addObject:sak];
-
+	
+  startedAt = [NSDate timeIntervalSinceReferenceDate];
   
 	
 	return self;
@@ -125,7 +126,12 @@ struct rgbacolor {
     
     [renderOptions.shaderProgram use];
     
-		glUniform3f([standardShader uniformNamed:@"lightDir"], 0.2, 0.2, 1.0);
+		glUniform3f([renderOptions.shaderProgram uniformNamed:@"lightDir"], 0.2, 0.2, 1.0);
+    NSInteger time = [renderOptions.shaderProgram uniformNamed:@"time"];
+    if(time != -1) {
+    	float d = [NSDate timeIntervalSinceReferenceDate]-startedAt;
+	    glUniform1f(time, d); 
+    }
 
     [sak renderWithOptions:renderOptions];
   }

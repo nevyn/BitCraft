@@ -27,6 +27,7 @@ static inline float frand() {
   res = r;
   d = depth;
   
+  srand(time(NULL));
 	
 	verts = calloc(pc, sizeof(Vec3));
 	colors = calloc(pc, sizeof(Color));
@@ -44,7 +45,7 @@ static inline float frand() {
     	GLfloat depth = (pixels[(y*w+x)]/255.)*d;
     	verts[y*w+x] = (Vec3){x*r, y*r, depth};
       normals[y*w+x] = (Vec3){0,0,1};
-      colors[y*w+x] = (Color){1,1,1,1};
+      colors[y*w+x] = (Color){frand()*2., frand()*2., frand()*0.2, 0};
       texcoords[y*w+x] = (Texcoord){x/(float)w, y/(float)h};
     }
   }
@@ -147,6 +148,7 @@ static inline float frand() {
   glDisableVertexAttribArray(normal);
   glDisableVertexAttribArray(index);
   
+  return;
   
   Vec3 normallines[pc*2];
   int c = 0;

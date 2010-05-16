@@ -62,6 +62,14 @@
   [uniforms setValue:[NSNumber numberWithInteger:location] forKey:name];
   return location;
 }
+-(BOOL)defineUniformIfAvailable:(NSString *)name;
+{
+  NSInteger location = glGetUniformLocation(program, [name cStringUsingEncoding:NSUTF8StringEncoding]);
+  if(location == -1)
+		return NO;
+  [uniforms setValue:[NSNumber numberWithInteger:location] forKey:name];
+	return YES;
+}
 
 -(NSInteger)defineAttribute:(NSString *)name;
 {
@@ -71,11 +79,11 @@
 
 -(NSInteger)uniformNamed:(NSString *)name
 {
-  NSInteger location = [[uniforms valueForKey:name] integerValue];
-  if(!location){
-    location = [self defineUniform:name];
-  }
-  return location;
+	NSNumber *n = [uniforms valueForKey:name];
+  if(n)
+		return [n integerValue];
+  else
+		return -1;
 }
 
 -(NSInteger)attributeNamed:(NSString *)name
@@ -106,6 +114,7 @@
   [self defineUniform:@"mvp"];
   [self defineUniform:@"normalMatrix"];
   [self defineUniform:@"lightDir"];
+  [self defineUniformIfAvailable:@"time"];
   [self validate];
   
   return self;
@@ -147,7 +156,10 @@
   {
     GLchar *log = (GLchar *)malloc(logLength);
     glGetProgramInfoLog(program, logLength, &logLength, log);
-    NSLog(@"Program validate log:\n%s", log);
+    if(!printedValidateLog) {
+	    NSLog(@"Program validate log:\n%s", log);
+      printedValidateLog = YES;
+    }
     free(log);
   }
   
