@@ -223,12 +223,12 @@ enum {
 	float s = sinf(-cameraRot.y);
 	float c = cosf(-cameraRot.y);
 	
+	diff = CGSizeMake(diff.width/300., diff.height/200.);
+  
 	diff = CGSizeMake(
 		diff.width*c - diff.height*s,
 		diff.width*s + diff.height*c
 	);
-	
-	diff = CGSizeMake(diff.width/300., diff.height/300.);
 
 	pan.x -= diff.width;
 	pan.y -= diff.height;
