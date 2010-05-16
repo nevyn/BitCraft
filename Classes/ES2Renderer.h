@@ -31,7 +31,7 @@
   CGPoint pan;
   CGPoint cameraRot;
   CATransform3D perspectiveMatrix;
-  ShaderProgram *shaderProgram;
+  ShaderProgram *standardShader;
   ShaderProgram *pickingShader;
   ShaderProgram *terrainShader;
   

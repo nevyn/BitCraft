@@ -112,6 +112,15 @@ struct rgbacolor {
     glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
   
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  
+  if(renderOptions.picking)
+    renderOptions.shaderProgram = pickingShader;
+  else
+    renderOptions.shaderProgram = standardShader;
+  
+	// Use shader program
+  [renderOptions.shaderProgram use];
+
 	
   
   CATransform3D camera = CATransform3DIdentity;
@@ -120,7 +129,7 @@ struct rgbacolor {
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, zoom);
   camera.m44 = 1+zoom;
 	
-	glUniform3f([shaderProgram uniformNamed:@"lightDir"], 0.2, 0.2, 1.0);
+	glUniform3f([standardShader uniformNamed:@"lightDir"], 0.2, 0.2, 1.0);
 
 	[terraintex apply];
 	
@@ -129,13 +138,6 @@ struct rgbacolor {
   renderOptions.viewMatrix = camera;
   renderOptions.projectionMatrix = perspectiveMatrix;
 
-  if(renderOptions.picking)
-    renderOptions.shaderProgram = pickingShader;
-  else
-    renderOptions.shaderProgram = shaderProgram;
-  
-	// Use shader program
-  [renderOptions.shaderProgram use];
   
 	
 	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
@@ -149,7 +151,7 @@ struct rgbacolor {
   glUniformMatrix4fv(uniforms[UNIFORM_NORMALMATRIX], 1, GL_FALSE, (float*)&normal);
   
   renderOptions.modelViewMatrix = modelview;
-  renderOptions.shaderProgram = shaderProgram;
+  renderOptions.shaderProgram = standardShader;
   
   [terraintex apply];
   
@@ -157,7 +159,7 @@ struct rgbacolor {
     [sak renderWithOptions:renderOptions];
   
 
-  renderOptions.shaderProgram = shaderProgram;
+  renderOptions.shaderProgram = standardShader;
   renderOptions.modelViewMatrix = CATransform3DRotate(CATransform3DRotate(CATransform3DMakeTranslation(
   	-heightmap.sizeInUnits.width/2., 
     -heightmap.sizeInUnits.height/2.,
@@ -229,7 +231,7 @@ struct rgbacolor {
 
 - (BOOL)loadShaders
 {
-  shaderProgram = [[[ShaderProgram alloc] initWithShaderName:@"Shader"] commonSetup];
+  standardShader = [[[ShaderProgram alloc] initWithShaderName:@"Shader"] commonSetup];
   pickingShader = [[[ShaderProgram alloc] initWithShaderName:@"picking"] commonSetup];
   
   return TRUE;
@@ -278,7 +280,7 @@ struct rgbacolor {
 		colorRenderbuffer = 0;
 	}
 	
-  [shaderProgram release];
+  [standardShader release];
   
 	// Tear down context
 	if ([EAGLContext currentContext] == context)
