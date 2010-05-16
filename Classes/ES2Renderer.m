@@ -57,9 +57,10 @@ struct rgbacolor {
     
     fingers = [[NSMutableDictionary alloc] init];
 		
-		terraintex = [[Texture2D textureNamed:@"heightmap.png"] retain];
+		terraintex = [[Texture2D textureNamed:@"tex.jpg"] retain];
     heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
-                                      resolution:0.1];
+                                      resolution:0.1
+                                      depth:0.5];
 		
 		cameraRot = CGPointMake(-1.25, -0.65);
 		
@@ -119,7 +120,9 @@ struct rgbacolor {
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, zoom);
   camera.m44 = 1+zoom;
 	
-	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
+	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 0.2, 1.0);
+
+	[terraintex apply];
 	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
 	
 
@@ -139,8 +142,6 @@ struct rgbacolor {
 	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
 	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
   
-  [heightmap renderWithOptions:renderOptions];
-	
   CATransform3D modelview = CATransform3DIdentity;
   
   CATransform3D normal = modelview;
@@ -156,6 +157,15 @@ struct rgbacolor {
   for(Entity *sak in saker)
     [sak renderWithOptions:renderOptions];
   
+
+  renderOptions.shaderProgram = shaderProgram;
+  renderOptions.modelViewMatrix = CATransform3DRotate(CATransform3DRotate(CATransform3DMakeTranslation(
+  	-heightmap.sizeInUnits.width/2., 
+    -heightmap.sizeInUnits.height/2.,
+    -1.
+  ), debugPan.x, 0, 0, 1), debugPan.y, 0, 1, 0);
+  [heightmap renderWithOptions:renderOptions];
+	  
   if(renderOptions.picking){
     for(Finger *finger in newFingers){
       CGPoint point = finger.point;
@@ -314,12 +324,12 @@ struct rgbacolor {
 	float s = sinf(-cameraRot.y);
 	float c = cosf(-cameraRot.y);
 	
+	diff = CGSizeMake(diff.width/300., diff.height/200.);
+  
 	diff = CGSizeMake(
 		diff.width*c - diff.height*s,
 		diff.width*s + diff.height*c
 	);
-	
-	diff = CGSizeMake(diff.width/300., diff.height/300.);
 
 	pan.x -= diff.width;
 	pan.y -= diff.height;
@@ -367,6 +377,14 @@ struct rgbacolor {
   Finger *finger = [fingers objectForKey:[NSValue valueWithPointer:touch]];
   Entity *entity = finger.object;
   NSLog(@"fingers: %@", fingers);
+}
+
+- (void)debugPan:(CGSize)diff;
+{
+	diff = CGSizeMake(diff.width/300., diff.height/300.);
+
+	debugPan.x -= diff.width;
+	debugPan.y -= diff.height;
 }
 
 @end

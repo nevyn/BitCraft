@@ -41,6 +41,9 @@
   
   NSMutableDictionary *fingers;
   NSMutableArray *newFingers;
+
+
+  CGPoint debugPan;
 }
 
 - (void)render;
@@ -52,5 +55,6 @@
 - (void)finger:(id)touch touchedPoint:(CGPoint)point;
 - (void)finger:(id)touch releasedPoint:(CGPoint)point;
 - (void)finger:(id)touch movedToPoint:(CGPoint)point;
+- (void)debugPan:(CGSize)diff;
 @end
 

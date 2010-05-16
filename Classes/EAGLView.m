@@ -148,57 +148,48 @@
   for(UITouch *t in touches){
     [renderer finger:t touchedPoint:[t locationInView:self]];
   }
+  
+	[first release];
+	first = [[touches anyObject] retain];
 }
-
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
 {
-  if(touches.count == 2){
-    UITouch *t1 = [[touches allObjects] objectAtIndex:0];
-    UITouch *t2 = [[touches allObjects] objectAtIndex:1];
-    
-    CGPoint p1 = [t1 locationInView:self];
-    CGPoint p2 = [t2 locationInView:self];
-    
-    CGPoint pp1 = [t1 previousLocationInView:self];
-    CGPoint pp2 = [t2 previousLocationInView:self];
-    
-    CGPoint diffNow = CGPointMake(p1.x - p2.x, p1.y - p2.y);
-    CGPoint diffThen = CGPointMake(pp1.x - pp2.x, pp1.y - pp2.y);
-    
-    float distNow = sqrt(diffNow.x * diffNow.x + diffNow.y * diffNow.y);
-    float distThen = sqrt(diffThen.x * diffThen.x + diffThen.y * diffThen.y);
-    
-    float diff = distNow - distThen;
-    NSLog(@"zoomdist: %f", diff);
-    [renderer zoom:diff];
-    
-  } else {
-    UITouch *t = [touches anyObject];
-    CGPoint p = [t locationInView:self];
-    if(oldP.x && oldP.y) {
-      CGSize sz = CGSizeMake(oldP.x-p.x, p.y-oldP.y);
-      [renderer pan:sz];
-    }
-    oldP = p;
-  }
+	UITouch *t = first;
+  CGPoint oldP = [t previousLocationInView:self];
+	CGPoint p = [t locationInView:self];
+	CGSize sz = CGSizeMake(oldP.x-p.x, p.y-oldP.y);
+  scrollVelocity = sz;
+  if([touches count] == 1)
+		[renderer pan:sz];
+  else 
+  	[renderer debugPan:sz];
   
   for(UITouch *t in touches){
     [renderer finger:t movedToPoint:[t locationInView:self]];
   }
 }
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
-{
-	oldP = CGPointZero;
-  
+
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent*)evt;
+{ 
   for(UITouch *t in touches){
     [renderer finger:t releasedPoint:[t locationInView:self]];
   }
+	[self performSelector:@selector(velocityScroll) withObject:nil afterDelay:0.01];
 }
--(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)evt;
+
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	oldP = CGPointZero;
   for(UITouch *t in touches){
     [renderer finger:t releasedPoint:[t locationInView:self]];
-  }
+  }  
+}
+
+-(void)velocityScroll;
+{
+	CGSize thisScroll = CGSizeMake(scrollVelocity.width*0.5, scrollVelocity.height*0.5);
+	[renderer pan:thisScroll];
+  scrollVelocity = CGSizeMake(scrollVelocity.width*0.9, scrollVelocity.height*0.9);
+  if(abs(scrollVelocity.width) + abs(scrollVelocity.height) > 0.1)
+  	[self performSelector:@selector(velocityScroll) withObject:nil afterDelay:0.01];
 }
 @end

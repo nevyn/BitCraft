@@ -42,6 +42,10 @@ static Vector3 *negativeZAxis;
 {
 	return Z;
 }
+-(Vec3)vec3;
+{
+	return (Vec3){X, Y, Z};
+}
 
 + (void)initialize;
 {
