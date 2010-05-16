@@ -10,28 +10,6 @@
 #import "CATransform3DAdditions.h"
 #import "RenderOptions.h"
 
-
-// uniform index
-enum {
-	UNIFORM_MVP,
-	UNIFORM_NORMALMATRIX,
-	UNIFORM_LIGHTDIR,
-	UNIFORM_SAMPLER,
-	NUM_UNIFORMS
-};
-GLint uniforms[NUM_UNIFORMS];
-
-// attribute index
-enum {
-	ATTRIB_VERTEX,
-	ATTRIB_COLOR,
-	ATTRIB_TEXCOORD,
-	ATTRIB_NORMAL,
-  ATTRIB_INDEX,
-	NUM_ATTRIBUTES
-};
-
-
 @interface ES2Renderer (PrivateMethods)
 - (BOOL)loadShaders;
 @end
@@ -102,10 +80,9 @@ enum {
 	camera = CATransform3DRotate(camera, cameraRot.y, 0, 0, 1);
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
 	
-	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 0.2, 1.0);
+	glUniform3f([shaderProgram uniformNamed:@"lightDir"], 0.2, 0.2, 1.0);
 
 	[terraintex apply];
-	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
 	
 	static float foo = 0.0;
 	foo += 0.025;
@@ -140,29 +117,7 @@ enum {
 
 - (BOOL)loadShaders
 {
-  shaderProgram = [[ShaderProgram alloc] init];
-  
-  Shader *vertShader = [[Shader alloc] initVertexShaderFromFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"vsh"]];
-  [shaderProgram addShader:vertShader];
-  [vertShader release];
-  
-  Shader *fragShader = [[Shader alloc] initFragmentShaderFromFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"]];
-  [shaderProgram addShader:fragShader];
-  [fragShader release];
-  
-
-  [shaderProgram bindAttribute:@"position" to:ATTRIB_VERTEX];
-  [shaderProgram bindAttribute:@"color" to:ATTRIB_COLOR];
-  [shaderProgram bindAttribute:@"texCoord" to:ATTRIB_TEXCOORD];
-  [shaderProgram bindAttribute:@"normal" to:ATTRIB_NORMAL];
-  [shaderProgram link];
-  
-  
-  uniforms[UNIFORM_MVP]           = [shaderProgram defineUniform:@"mvp"];
-  uniforms[UNIFORM_NORMALMATRIX]  = [shaderProgram defineUniform:@"normalMatrix"];
-  uniforms[UNIFORM_LIGHTDIR]      = [shaderProgram defineUniform:@"lightDir"];
-  
-  [shaderProgram validate];
+  shaderProgram = [[[ShaderProgram alloc] initWithShaderName:@"Shader"] commonSetup];
   
   return TRUE;
 }

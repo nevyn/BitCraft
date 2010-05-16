@@ -24,7 +24,20 @@
   
   return self;
 }
-
+-(id)initWithShaderName:(NSString*)commonName;
+{
+	if(![self init]) return nil;
+  
+  Shader *vertShader = [[Shader alloc] initVertexShaderFromFile:[[NSBundle mainBundle] pathForResource:commonName ofType:@"vsh"]];
+  [self addShader:vertShader];
+  [vertShader release];
+  
+  Shader *fragShader = [[Shader alloc] initFragmentShaderFromFile:[[NSBundle mainBundle] pathForResource:commonName ofType:@"fsh"]];
+  [self addShader:fragShader];
+  [fragShader release];
+	
+  return self;
+}
 
 -(void)dealloc
 {
@@ -43,7 +56,6 @@
 
 -(NSInteger)defineUniform:(NSString *)name;
 {
-
   NSInteger location = glGetUniformLocation(program, [name cStringUsingEncoding:NSUTF8StringEncoding]);
   if(location == -1)
     [[NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"No uniform named %@", name] userInfo:nil] raise];
@@ -53,11 +65,8 @@
 
 -(NSInteger)defineAttribute:(NSString *)name;
 {
-  NSInteger location = glGetAttribLocation(program, [name cStringUsingEncoding:NSUTF8StringEncoding]);
-  if(location == -1)
-    [[NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"No attribute named %@", name] userInfo:nil] raise];
-  [attributes setValue:[NSNumber numberWithInteger:location] forKey:name];
-  return location;
+  [self bindAttribute:name to:attribBase++];
+  return attribBase;
 }
 
 -(NSInteger)uniformNamed:(NSString *)name
@@ -80,11 +89,26 @@
 
 -(NSInteger)bindAttribute:(NSString *)name to:(NSInteger)location;
 {
-  if(![attributes valueForKey:name]){
-    [attributes setValue:[NSNumber numberWithInteger:location] forKey:name];
-    glBindAttribLocation(program, location, [name cStringUsingEncoding:NSUTF8StringEncoding]);
-  }
+  assert(![attributes valueForKey:name]);
+  [attributes setValue:[NSNumber numberWithInteger:location] forKey:name];
+  glBindAttribLocation(program, location, [name cStringUsingEncoding:NSUTF8StringEncoding]);
   return location;
+}
+
+-(id)commonSetup;
+{
+	[self defineAttribute:@"position"];
+  [self defineAttribute:@"color"];
+  [self defineAttribute:@"texCoord"];
+  [self defineAttribute:@"normal"];  
+  [self link];
+  
+  [self defineUniform:@"mvp"];
+  [self defineUniform:@"normalMatrix"];
+  [self defineUniform:@"lightDir"];
+  [self validate];
+  
+  return self;
 }
 
 

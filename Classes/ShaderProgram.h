@@ -18,14 +18,19 @@
   
   NSDictionary *uniforms;
   NSDictionary *attributes;
+  NSInteger attribBase;
 }
 
 @property (readonly) GLuint program;
+
+-(id)init;
+-(id)initWithShaderName:(NSString*)commonName;
 
 -(void)addShader:(Shader *)shader;
 -(NSInteger)defineUniform:(NSString *)name;
 -(NSInteger)defineAttribute:(NSString *)name;
 -(NSInteger)bindAttribute:(NSString *)name to:(NSInteger)location;
+-(id)commonSetup;
 -(NSInteger)uniformNamed:(NSString *)name;
 -(NSInteger)attributeNamed:(NSString *)name;
 -(BOOL)link;

@@ -34,6 +34,8 @@
 		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
     ShaderProgram *shaderProgram;
+    ShaderProgram *terrainShader;
+    
     Entity *sak;
     Heightmap *heightmap;
 		Texture2D *terraintex;
