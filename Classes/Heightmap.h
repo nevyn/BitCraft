@@ -18,7 +18,7 @@ typedef struct {
 	GLfloat u, v;
 } Texcoord;
 
-@interface Heightmap : NSObject {
+@interface Heightmap : NSObject <IRenderable>{
 	Vec3 *verts, *normals;
   Color *colors;
   Texcoord *texcoords;
@@ -27,7 +27,6 @@ typedef struct {
   float res, d;
 }
 -(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth;
--(void)renderWithOptions:(RenderOptions *)options;
 
 -(CGSize)sizeInUnits;
 @end

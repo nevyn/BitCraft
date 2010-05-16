@@ -45,45 +45,56 @@ struct rgbacolor {
 // Create an OpenGL ES 2.0 context
 - (id)init
 {
-	if ((self = [super init]))
-	{
-		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-		
-		if (!context || ![EAGLContext setCurrentContext:context] || ![self loadShaders])
-		{
-			[self release];
-			return nil;
-		}
-    
-    fingers = [[NSMutableDictionary alloc] init];
-		
-		terraintex = [[Texture2D textureNamed:@"tex.jpg"] retain];
-    heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
-                                      resolution:0.1
-                                      depth:0.5];
-		
-		cameraRot = CGPointMake(-1.25, -0.65);
-		
-		// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
-		glGenFramebuffers(1, &defaultFramebuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
-        
-		glGenRenderbuffers(1, &colorRenderbuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+	if (![super init]) return nil;
+  
+  context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+  
+  if (!context || ![EAGLContext setCurrentContext:context] || ![self loadShaders])
+  {
+    [self release];
+    return nil;
+  }
+  
+  fingers = [[NSMutableDictionary alloc] init];
+  
+  terraintex = [[Texture2D textureNamed:@"tex.jpg"] retain];
+  
+  cameraRot = CGPointMake(-1.25, -0.65);
+  
+  // Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
+  glGenFramebuffers(1, &defaultFramebuffer);
+  glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
+  
+  glGenRenderbuffers(1, &colorRenderbuffer);
+  glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+  
+  glGenRenderbuffers(1, &depthRenderbuffer);
+  glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+  
+  saker = [[NSMutableArray alloc] init];
+  for(float something = -5; something < 5; something+= 1) {
+    Entity *sak = [[[Entity alloc] initWithRenderable:[[QuadMesh new] autorelease]] autorelease];
+    Vector4 *pos = [Vector4 vectorWithX:something y:((int)something)%2 z:0 w:1];
+    sak.position = pos;
+    sak.shader = standardShader;
+    [saker addObject:sak];
+  }
+  
+ 	Heightmap *heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
+                                    resolution:0.1
+                                         depth:0.5];
+  Entity *sak = [[[Entity alloc] initWithRenderable:heightmap] autorelease];
+  sak.position = [Vector4 vectorWithX:-heightmap.sizeInUnits.width/2.
+                                    y:-heightmap.sizeInUnits.height/2.
+                                    z:-1
+                                    w:1];
+  sak.shader = standardShader;
+  sak.pickable = NO;
+  [saker addObject:sak];
 
-    glGenRenderbuffers(1, &depthRenderbuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
-    
-    saker = [[NSMutableArray alloc] init];
-    for(float something = -5; something < 5; something+= 1) {
-      Entity *sak = [[Entity alloc] init];
-      Vector4 *pos = [Vector4 vectorWithX:something y:((int)something)%2 z:0 w:1];
-      sak.position = pos;
-      [saker addObject:sak];
-    }
-	}
+  
 	
 	return self;
 }
@@ -112,15 +123,6 @@ struct rgbacolor {
     glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
   
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  
-  if(renderOptions.picking)
-    renderOptions.shaderProgram = pickingShader;
-  else
-    renderOptions.shaderProgram = standardShader;
-  
-	// Use shader program
-  [renderOptions.shaderProgram use];
-
 	
   
   CATransform3D camera = CATransform3DIdentity;
@@ -129,43 +131,33 @@ struct rgbacolor {
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, zoom);
   camera.m44 = 1+zoom;
 	
-	glUniform3f([standardShader uniformNamed:@"lightDir"], 0.2, 0.2, 1.0);
-
-	[terraintex apply];
-	
-
   renderOptions.viewport = CGRectMake(0, 0, backingWidth, backingHeight);
   renderOptions.viewMatrix = camera;
   renderOptions.projectionMatrix = perspectiveMatrix;
-
-  
-	
-	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
-	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
-  
-  CATransform3D modelview = CATransform3DIdentity;
-  
-  CATransform3D normal = modelview;
-  normal = CATransform3DInvert(normal);
-  normal = CATransform3DTranspose(normal);
-  glUniformMatrix4fv(uniforms[UNIFORM_NORMALMATRIX], 1, GL_FALSE, (float*)&normal);
-  
-  renderOptions.modelViewMatrix = modelview;
-  renderOptions.shaderProgram = standardShader;
   
   [terraintex apply];
   
-  for(Entity *sak in saker)
+  for(Entity *sak in saker) {
+    if(renderOptions.picking && sak.pickable)
+    	renderOptions.shaderProgram = pickingShader;
+  	else
+    	renderOptions.shaderProgram = sak.shader;
+    
+    [renderOptions.shaderProgram use];
+    
+    glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
+		glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);  
+		glUniform3f([standardShader uniformNamed:@"lightDir"], 0.2, 0.2, 1.0);
+
     [sak renderWithOptions:renderOptions];
+  }
   
 
-  renderOptions.shaderProgram = standardShader;
-  renderOptions.modelViewMatrix = CATransform3DRotate(CATransform3DRotate(CATransform3DMakeTranslation(
+/*  renderOptions.modelViewMatrix = CATransform3DRotate(CATransform3DRotate(CATransform3DMakeTranslation(
   	-heightmap.sizeInUnits.width/2., 
     -heightmap.sizeInUnits.height/2.,
     -1.
-  ), debugPan.x, 0, 0, 1), debugPan.y, 0, 1, 0);
-  [heightmap renderWithOptions:renderOptions];
+  ), debugPan.x, 0, 0, 1), debugPan.y, 0, 1, 0);*/
 	  
   if(renderOptions.picking){
     for(Finger *finger in newFingers){

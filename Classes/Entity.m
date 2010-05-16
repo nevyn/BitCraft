@@ -12,15 +12,15 @@
 
 @implementation Entity
 
-@synthesize pickable;
+@synthesize pickable, shader;
 
--(id)init
+-(id)initWithRenderable:(NSObject<IRenderable> *)renderable;
 {
   if(![super init]) return nil;
   
   matrix = CATransform3DIdentity;
   
-  mesh = [[QuadMesh alloc] init];
+  mesh = [renderable retain];
   
   pickable = YES;
 
@@ -29,6 +29,7 @@
 
 -(void)dealloc
 {
+	[mesh release];
   [super dealloc];
 }
 

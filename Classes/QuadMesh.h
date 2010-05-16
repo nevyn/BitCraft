@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "RenderOptions.h"
 
-@interface QuadMesh : NSObject {
+@interface QuadMesh : NSObject <IRenderable>{
 
 }
 

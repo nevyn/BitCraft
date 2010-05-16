@@ -35,7 +35,6 @@
   ShaderProgram *pickingShader;
   ShaderProgram *terrainShader;
   
-  Heightmap *heightmap;
   Texture2D *terraintex;
 
   NSMutableArray *saker;

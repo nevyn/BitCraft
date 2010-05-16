@@ -111,17 +111,6 @@ static inline float frand() {
 
 -(void)renderWithOptions:(RenderOptions *)options;
 {
-  if(options.picking)
-    return;
-  
-  CATransform3D mvp = options.modelViewProjectionMatrix;
-  glUniformMatrix4fv([options.shaderProgram uniformNamed:@"mvp"], 1, GL_FALSE, (float*)&mvp);
-  
-  CATransform3D normalMatrix = options.modelViewMatrix;
-  normalMatrix = CATransform3DInvert(normalMatrix);
-  normalMatrix = CATransform3DTranspose(normalMatrix);
-  glUniformMatrix4fv([options.shaderProgram uniformNamed:@"normalMatrix"], 1, GL_FALSE, (float*)&normalMatrix);
-
   // Update attribute values
   NSInteger vertex    = [options.shaderProgram attributeNamed:@"position"];
   NSInteger color     = [options.shaderProgram attributeNamed:@"color"];

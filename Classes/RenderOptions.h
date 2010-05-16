@@ -36,3 +36,8 @@
 @property (nonatomic, assign) BOOL picking;
 
 @end
+
+
+@protocol IRenderable
+-(void)renderWithOptions:(RenderOptions *)options;
+@end

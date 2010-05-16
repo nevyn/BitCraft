@@ -14,17 +14,17 @@
 #import "ShaderProgram.h"
 #import "QuadMesh.h"
 
-@interface Entity : NSObject {
+
+@interface Entity : NSObject <IRenderable>{
   CATransform3D matrix;
+  ShaderProgram *shader;
   
-  QuadMesh *mesh;
+  NSObject<IRenderable> *mesh;
   
   BOOL pickable;
 }
-
+-(id)initWithRenderable:(NSObject<IRenderable> *)renderable;
 @property (nonatomic, assign) Vector4 *position;
 @property (nonatomic, assign) BOOL pickable;
-
--(void)renderWithOptions:(RenderOptions *)options;
-
+@property (nonatomic, retain) ShaderProgram *shader;
 @end
