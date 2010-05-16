@@ -11,26 +11,6 @@
 #import "RenderOptions.h"
 #import "Finger.h"
 
-// uniform index
-enum {
-	UNIFORM_MVP,
-	UNIFORM_NORMALMATRIX,
-	UNIFORM_LIGHTDIR,
-	UNIFORM_SAMPLER,
-	NUM_UNIFORMS
-};
-GLint uniforms[NUM_UNIFORMS];
-
-// attribute index
-enum {
-	ATTRIB_VERTEX,
-	ATTRIB_COLOR,
-	ATTRIB_TEXCOORD,
-	ATTRIB_NORMAL,
-  ATTRIB_INDEX,
-	NUM_ATTRIBUTES
-};
-
 struct rgbacolor {
   GLubyte r, g, b, a;
 };
@@ -145,8 +125,6 @@ struct rgbacolor {
     
     [renderOptions.shaderProgram use];
     
-    glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
-		glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);  
 		glUniform3f([standardShader uniformNamed:@"lightDir"], 0.2, 0.2, 1.0);
 
     [sak renderWithOptions:renderOptions];
@@ -224,6 +202,7 @@ struct rgbacolor {
 - (BOOL)loadShaders
 {
   standardShader = [[[ShaderProgram alloc] initWithShaderName:@"Shader"] commonSetup];
+  terrainShader = [[[ShaderProgram alloc] initWithShaderName:@"Terrain"] commonSetup];
   pickingShader = [[[ShaderProgram alloc] initWithShaderName:@"picking"] commonSetup];
   
   return TRUE;
