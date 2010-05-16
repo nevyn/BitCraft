@@ -8,6 +8,8 @@ typedef struct
 
 Vec3 makeVec3(float x, float y, float z);
 
+#define Vec3Wrap(vec3) [Vector3 vectorWithMemory:(float*)&vec3 memoryResponsibility:Vector3MemoryResponsibilityNone]
+
 typedef enum
 {
 	Vector3MemoryResponsibilityFree,
@@ -24,6 +26,7 @@ typedef enum
 @property(readonly, nonatomic) float x;
 @property(readonly, nonatomic) float y;
 @property(readonly, nonatomic) float z;
+@property(readonly, nonatomic) Vec3 vec3;
 // Add rgb and stp properties? Might be inconsistent since Vec3 wont have these members (no support for anonymous union in C).
 
 + (Vector3*)zero;

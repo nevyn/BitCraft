@@ -9,10 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <OpenGLES/ES2/gl.h>
 #import "RenderOptions.h"
+#import "Vector3.h"
 
-typedef struct {
-	GLfloat x, y, z;
-} Vertex;
 typedef struct {
 	GLfloat r, g, b, a;
 } Color;
@@ -21,7 +19,7 @@ typedef struct {
 } Texcoord;
 
 @interface Heightmap : NSObject {
-	Vertex *verts, *normals;
+	Vec3 *verts, *normals;
   Color *colors;
   Texcoord *texcoords;
   GLushort *indices;
