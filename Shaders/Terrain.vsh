@@ -22,7 +22,7 @@ void main()
   	0,
     0.4+sin(time*gphase+bphase)*intensity,
     0.4+sin(time)*0.1,
-    1
+    color.a
   );
 	
 	gl_Position = mvp * position;

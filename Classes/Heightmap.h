@@ -10,6 +10,7 @@
 #import <OpenGLES/ES2/gl.h>
 #import "RenderOptions.h"
 #import "Vector3.h"
+#import "Texture2D.h"
 
 typedef struct {
 	GLfloat r, g, b, a;
@@ -25,8 +26,9 @@ typedef struct {
   GLushort *indices;
   int w, h, pc, vc;
   float res, d;
+  Texture2D* tex;
 }
--(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth;
+-(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth texture:(Texture2D*)texture;
 
 -(CGSize)sizeInUnits;
 @end

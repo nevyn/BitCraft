@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		052E6DBA11A06456007D5A83 /* land.png in Resources */ = {isa = PBXBuildFile; fileRef = 052E6DB811A06456007D5A83 /* land.png */; };
+		052E6DBB11A06456007D5A83 /* sea.png in Resources */ = {isa = PBXBuildFile; fileRef = 052E6DB911A06456007D5A83 /* sea.png */; };
+		052E6DF811A068AA007D5A83 /* landtex.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 052E6DF711A068AA007D5A83 /* landtex.jpg */; };
 		05D86D1D119DB95E004BA8F5 /* CATransform3DAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D86D1C119DB95E004BA8F5 /* CATransform3DAdditions.m */; };
 		05D86E82119E039F004BA8F5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05D86E81119E039F004BA8F5 /* CoreGraphics.framework */; };
-		05D86F80119E2637004BA8F5 /* heightmap.png in Resources */ = {isa = PBXBuildFile; fileRef = 05D86F7F119E2637004BA8F5 /* heightmap.png */; };
 		05D86FCB119E2A01004BA8F5 /* Texture2D.mm in Sources */ = {isa = PBXBuildFile; fileRef = 05D86FCA119E2A01004BA8F5 /* Texture2D.mm */; };
 		05D87004119E2D5D004BA8F5 /* Frustum.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D86FF9119E2D5D004BA8F5 /* Frustum.m */; };
 		05D87005119E2D5D004BA8F5 /* Matrix.m in Sources */ = {isa = PBXBuildFile; fileRef = 05D86FFB119E2D5D004BA8F5 /* Matrix.m */; };
@@ -48,10 +50,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		052E6DB811A06456007D5A83 /* land.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = land.png; sourceTree = "<group>"; };
+		052E6DB911A06456007D5A83 /* sea.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sea.png; sourceTree = "<group>"; };
+		052E6DF711A068AA007D5A83 /* landtex.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = landtex.jpg; sourceTree = "<group>"; };
 		05D86D1B119DB95E004BA8F5 /* CATransform3DAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATransform3DAdditions.h; sourceTree = "<group>"; };
 		05D86D1C119DB95E004BA8F5 /* CATransform3DAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATransform3DAdditions.m; sourceTree = "<group>"; };
 		05D86E81119E039F004BA8F5 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		05D86F7F119E2637004BA8F5 /* heightmap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heightmap.png; sourceTree = "<group>"; };
 		05D86FC9119E2A01004BA8F5 /* Texture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture2D.h; sourceTree = "<group>"; };
 		05D86FCA119E2A01004BA8F5 /* Texture2D.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Texture2D.mm; sourceTree = "<group>"; };
 		05D86FF8119E2D5D004BA8F5 /* Frustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Frustum.h; sourceTree = "<group>"; };
@@ -253,8 +257,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				052E6DB811A06456007D5A83 /* land.png */,
+				052E6DB911A06456007D5A83 /* sea.png */,
 				05D8736B119F3CFE004BA8F5 /* tex.jpg */,
-				05D86F7F119E2637004BA8F5 /* heightmap.png */,
+				052E6DF711A068AA007D5A83 /* landtex.jpg */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* BitCraft-Info.plist */,
 			);
@@ -322,8 +328,10 @@
 				216F02FB119EE7DC0030C892 /* picking.fsh in Resources */,
 				216F02FC119EE7DC0030C892 /* picking.vsh in Resources */,
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
-				05D86F80119E2637004BA8F5 /* heightmap.png in Resources */,
 				05D8736C119F3CFE004BA8F5 /* tex.jpg in Resources */,
+				052E6DBA11A06456007D5A83 /* land.png in Resources */,
+				052E6DBB11A06456007D5A83 /* sea.png in Resources */,
+				052E6DF811A068AA007D5A83 /* landtex.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

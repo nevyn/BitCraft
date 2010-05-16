@@ -40,6 +40,7 @@ struct rgbacolor {
   terraintex = [[Texture2D textureNamed:@"tex.jpg"] retain];
   
   cameraRot = CGPointMake(-1.25, -0.65);
+  zoom = 1.0;
   
   // Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
   glGenFramebuffers(1, &defaultFramebuffer);
@@ -62,17 +63,32 @@ struct rgbacolor {
     [saker addObject:sak];
   }
   
- 	Heightmap *heightmap = [[Heightmap alloc] initWithImage:[UIImage imageNamed:@"heightmap.png"] 
-                                    resolution:0.8
-                                         depth:1.0];
+ 	Heightmap *heightmap = [[[Heightmap alloc] initWithImage:[UIImage imageNamed:@"land.png"] 
+                                               resolution:0.8
+                                                    depth:1.0
+                                                  texture:[Texture2D textureNamed:@"landtex.jpg"]] autorelease];
   Entity *sak = [[[Entity alloc] initWithRenderable:heightmap] autorelease];
   sak.position = [Vector4 vectorWithX:-heightmap.sizeInUnits.width/2.
                                     y:-heightmap.sizeInUnits.height/2.
-                                    z:-1
+                                    z:0
+                                    w:1];
+  sak.shader = standardShader;
+  sak.pickable = NO;
+  [saker addObject:sak];
+  
+  heightmap = [[[Heightmap alloc] initWithImage:[UIImage imageNamed:@"sea.png"] 
+                                    resolution:0.8
+                                         depth:1.0
+                                       texture:nil] autorelease];
+  sak = [[[Entity alloc] initWithRenderable:heightmap] autorelease];
+  sak.position = [Vector4 vectorWithX:-heightmap.sizeInUnits.width/2.
+                                    y:-heightmap.sizeInUnits.height/2.
+                                    z:0
                                     w:1];
   sak.shader = terrainShader;
   sak.pickable = NO;
   [saker addObject:sak];
+  
 	
   startedAt = [NSDate timeIntervalSinceReferenceDate];
   

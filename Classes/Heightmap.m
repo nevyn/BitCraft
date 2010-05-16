@@ -16,7 +16,7 @@ static inline float frand() {
 
 
 @implementation Heightmap
--(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth;
+-(id)initWithImage:(UIImage*)image resolution:(float)r depth:(float)depth texture:(Texture2D*)texture;
 {
 	if(![super init]) return nil;
 
@@ -26,6 +26,8 @@ static inline float frand() {
   vc = (w-1)*(h-1)*6;
   res = r;
   d = depth;
+  
+  tex = [texture retain];
   
   srand(time(NULL));
 	
@@ -45,7 +47,10 @@ static inline float frand() {
     	GLfloat depth = (pixels[(y*w+x)]/255.)*d;
     	verts[y*w+x] = (Vec3){x*r, y*r, depth};
       normals[y*w+x] = (Vec3){0,0,1};
-      colors[y*w+x] = (Color){frand()*2., frand()*2., frand()*0.2, 0};
+      if(!texture)
+	      colors[y*w+x] = (Color){frand()*2., frand()*2., frand()*0.2, 0.8};
+      else
+      	colors[y*w+x] = (Color){1,1,1,1};
       texcoords[y*w+x] = (Texcoord){x/(float)w, y/(float)h};
     }
   }
@@ -138,7 +143,8 @@ static inline float frand() {
     return;
   }
 #endif
-  
+
+  [tex apply];
   
   glDrawElements(GL_TRIANGLES, vc, GL_UNSIGNED_SHORT, indices);
 
@@ -148,6 +154,7 @@ static inline float frand() {
   glDisableVertexAttribArray(normal);
   glDisableVertexAttribArray(index);
   
+  // Normal lines
   return;
   
   Vec3 normallines[pc*2];
@@ -164,7 +171,7 @@ static inline float frand() {
   }
   glVertexAttribPointer(vertex, 3, GL_FLOAT, 0, 0, normallines);
   glEnableVertexAttribArray(vertex);
-
+  
   glDrawArrays(GL_LINES, 0, c);
 }
 
