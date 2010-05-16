@@ -102,7 +102,7 @@ enum {
 	camera = CATransform3DRotate(camera, cameraRot.y, 0, 0, 1);
 	camera = CATransform3DTranslate(camera, pan.x, pan.y, 0);
 	
-	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 1, -0.2);
+	glUniform3f(uniforms[UNIFORM_LIGHTDIR], 0.2, 0.2, 1.0);
 
 	[terraintex apply];
 	glUniform1i(uniforms[UNIFORM_SAMPLER], terraintex.name);
@@ -115,11 +115,11 @@ enum {
   renderOptions.viewMatrix = camera;
   renderOptions.projectionMatrix = perspectiveMatrix;
   renderOptions.shaderProgram = shaderProgram;
-  renderOptions.modelViewMatrix = CATransform3DMakeTranslation(
+  renderOptions.modelViewMatrix = CATransform3DRotate(CATransform3DRotate(CATransform3DMakeTranslation(
   	-heightmap.sizeInUnits.width/2., 
     -heightmap.sizeInUnits.height/2.,
-    0.
-  );
+    -1.
+  ), debugPan.x, 0, 0, 1), debugPan.y, 0, 1, 0);
   [heightmap renderWithOptions:renderOptions];
 	
 	for(float something = -5; something < 5; something+= 1) {
@@ -232,5 +232,12 @@ enum {
 
 	pan.x -= diff.width;
 	pan.y -= diff.height;
+}
+- (void)debugPan:(CGSize)diff;
+{
+	diff = CGSizeMake(diff.width/300., diff.height/300.);
+
+	debugPan.x -= diff.width;
+	debugPan.y -= diff.height;
 }
 @end

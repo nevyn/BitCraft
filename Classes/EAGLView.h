@@ -27,8 +27,9 @@
     // isn't available.
     id displayLink;
     NSTimer *animationTimer;
-		
-		CGPoint oldP;
+    
+    UITouch *first;
+    CGSize scrollVelocity;
 }
 
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;

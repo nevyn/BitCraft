@@ -141,22 +141,33 @@
 	[super dealloc];
 }
 
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
+{
+	[first release];
+	first = [[touches anyObject] retain];
+}
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
 {
-	UITouch *t = [touches anyObject];
+	UITouch *t = first;
+  CGPoint oldP = [t previousLocationInView:self];
 	CGPoint p = [t locationInView:self];
-	if(oldP.x && oldP.y) {
-		CGSize sz = CGSizeMake(oldP.x-p.x, p.y-oldP.y);
+	CGSize sz = CGSizeMake(oldP.x-p.x, p.y-oldP.y);
+  scrollVelocity = sz;
+  if([touches count] == 1)
 		[renderer pan:sz];
-	}
-	oldP = p;
+  else 
+  	[renderer debugPan:sz];
 }
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent*)evt;
 {
-	oldP = CGPointZero;
+	[self performSelector:@selector(velocityScroll) withObject:nil afterDelay:0.01];
 }
--(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)evt;
+-(void)velocityScroll;
 {
-	oldP = CGPointZero;
+	CGSize thisScroll = CGSizeMake(scrollVelocity.width*0.5, scrollVelocity.height*0.5);
+	[renderer pan:thisScroll];
+  scrollVelocity = CGSizeMake(scrollVelocity.width*0.9, scrollVelocity.height*0.9);
+  if(abs(scrollVelocity.width) + abs(scrollVelocity.height) > 0.1)
+  	[self performSelector:@selector(velocityScroll) withObject:nil afterDelay:0.01];
 }
 @end

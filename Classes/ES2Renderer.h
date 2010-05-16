@@ -30,6 +30,7 @@
 
 		
 		CGPoint pan;
+    CGPoint debugPan;
 		CGPoint cameraRot;
 		CATransform3D perspectiveMatrix;
     ShaderProgram *shaderProgram;
@@ -42,5 +43,6 @@
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 
 - (void)pan:(CGSize)diff;
+- (void)debugPan:(CGSize)diff;
 @end
 
