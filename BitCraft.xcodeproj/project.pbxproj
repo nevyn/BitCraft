@@ -29,6 +29,10 @@
 		216F00F5119E2D360030C892 /* Entity.m in Sources */ = {isa = PBXBuildFile; fileRef = 216F00F4119E2D360030C892 /* Entity.m */; };
 		216F015D119EBBC90030C892 /* RenderOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 216F015C119EBBC90030C892 /* RenderOptions.m */; };
 		216F022D119EC73D0030C892 /* QuadMesh.m in Sources */ = {isa = PBXBuildFile; fileRef = 216F022C119EC73D0030C892 /* QuadMesh.m */; };
+		216F02FB119EE7DC0030C892 /* picking.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 216F02F1119ED8240030C892 /* picking.fsh */; };
+		216F02FC119EE7DC0030C892 /* picking.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 216F02F2119ED8240030C892 /* picking.vsh */; };
+		216F0368119EEB9B0030C892 /* PickingMesh.m in Sources */ = {isa = PBXBuildFile; fileRef = 216F0367119EEB9B0030C892 /* PickingMesh.m */; };
+		216F09EF119F29D60030C892 /* Finger.m in Sources */ = {isa = PBXBuildFile; fileRef = 216F09EE119F29D60030C892 /* Finger.m */; };
 		21960537119E0D2A0049CF65 /* Shader.m in Sources */ = {isa = PBXBuildFile; fileRef = 2196052E119E0D2A0049CF65 /* Shader.m */; };
 		21960538119E0D2A0049CF65 /* ShaderAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 21960530119E0D2A0049CF65 /* ShaderAttribute.m */; };
 		21960539119E0D2A0049CF65 /* ShaderProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 21960532119E0D2A0049CF65 /* ShaderProgram.m */; };
@@ -80,6 +84,12 @@
 		216F015C119EBBC90030C892 /* RenderOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenderOptions.m; sourceTree = "<group>"; };
 		216F022B119EC73D0030C892 /* QuadMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuadMesh.h; sourceTree = "<group>"; };
 		216F022C119EC73D0030C892 /* QuadMesh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuadMesh.m; sourceTree = "<group>"; };
+		216F02F1119ED8240030C892 /* picking.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = picking.fsh; path = Shaders/picking.fsh; sourceTree = "<group>"; };
+		216F02F2119ED8240030C892 /* picking.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = picking.vsh; path = Shaders/picking.vsh; sourceTree = "<group>"; };
+		216F0366119EEB9B0030C892 /* PickingMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PickingMesh.h; sourceTree = "<group>"; };
+		216F0367119EEB9B0030C892 /* PickingMesh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PickingMesh.m; sourceTree = "<group>"; };
+		216F09ED119F29D60030C892 /* Finger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Finger.h; sourceTree = "<group>"; };
+		216F09EE119F29D60030C892 /* Finger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Finger.m; sourceTree = "<group>"; };
 		2196052D119E0D2A0049CF65 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
 		2196052E119E0D2A0049CF65 /* Shader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shader.m; sourceTree = "<group>"; };
 		2196052F119E0D2A0049CF65 /* ShaderAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderAttribute.h; sourceTree = "<group>"; };
@@ -180,6 +190,10 @@
 				216F015C119EBBC90030C892 /* RenderOptions.m */,
 				216F022B119EC73D0030C892 /* QuadMesh.h */,
 				216F022C119EC73D0030C892 /* QuadMesh.m */,
+				216F0366119EEB9B0030C892 /* PickingMesh.h */,
+				216F0367119EEB9B0030C892 /* PickingMesh.m */,
+				216F09ED119F29D60030C892 /* Finger.h */,
+				216F09EE119F29D60030C892 /* Finger.m */,
 			);
 			name = stuff;
 			sourceTree = "<group>";
@@ -208,6 +222,8 @@
 				2514C27A10084DCA00A42282 /* Shader.vsh */,
 				05D8748F11A00D26004BA8F5 /* Terrain.fsh */,
 				05D8749011A00D26004BA8F5 /* Terrain.vsh */,
+				216F02F1119ED8240030C892 /* picking.fsh */,
+				216F02F2119ED8240030C892 /* picking.vsh */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";
@@ -303,6 +319,8 @@
 				05D8751A11A018B3004BA8F5 /* Terrain.vsh in Resources */,
 				2514C27B10084DCA00A42282 /* Shader.fsh in Resources */,
 				2514C27C10084DCA00A42282 /* Shader.vsh in Resources */,
+				216F02FB119EE7DC0030C892 /* picking.fsh in Resources */,
+				216F02FC119EE7DC0030C892 /* picking.vsh in Resources */,
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				05D86F80119E2637004BA8F5 /* heightmap.png in Resources */,
 				05D8736C119F3CFE004BA8F5 /* tex.jpg in Resources */,
@@ -336,7 +354,9 @@
 				05D87009119E2D5D004BA8F5 /* Vector4.m in Sources */,
 				216F015D119EBBC90030C892 /* RenderOptions.m in Sources */,
 				216F022D119EC73D0030C892 /* QuadMesh.m in Sources */,
+				216F0368119EEB9B0030C892 /* PickingMesh.m in Sources */,
 				05D87010119E2FB2004BA8F5 /* Heightmap.m in Sources */,
+				216F09EF119F29D60030C892 /* Finger.m in Sources */,
 				05D8724C119F1D49004BA8F5 /* UIImage+getPixels.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

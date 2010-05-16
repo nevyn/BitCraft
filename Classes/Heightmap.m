@@ -111,6 +111,9 @@ static inline float frand() {
 
 -(void)renderWithOptions:(RenderOptions *)options;
 {
+  if(options.picking)
+    return;
+  
   CATransform3D mvp = options.modelViewProjectionMatrix;
   glUniformMatrix4fv([options.shaderProgram uniformNamed:@"mvp"], 1, GL_FALSE, (float*)&mvp);
   

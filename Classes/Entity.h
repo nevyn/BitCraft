@@ -18,9 +18,12 @@
   CATransform3D matrix;
   
   QuadMesh *mesh;
+  
+  BOOL pickable;
 }
 
 @property (nonatomic, assign) Vector4 *position;
+@property (nonatomic, assign) BOOL pickable;
 
 -(void)renderWithOptions:(RenderOptions *)options;
 

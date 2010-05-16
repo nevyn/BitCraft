@@ -11,7 +11,20 @@
 
 @implementation RenderOptions
 
-@synthesize modelViewMatrix, viewMatrix, projectionMatrix, shaderProgram;
+@synthesize modelViewMatrix, viewMatrix, projectionMatrix, shaderProgram, viewport, picking;
+
+-(id)init
+{
+  if(![super init]) return nil;
+
+  modelViewMatrix = CATransform3DIdentity;
+  viewMatrix = CATransform3DIdentity;
+  projectionMatrix = CATransform3DIdentity;
+  
+  picking = NO;
+  
+  return self;
+}
 
 -(CATransform3D)modelViewProjectionMatrix
 {

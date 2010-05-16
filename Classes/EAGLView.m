@@ -53,6 +53,8 @@
 		NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
 		if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
 			displayLinkSupported = TRUE;
+    
+    [self setMultipleTouchEnabled:YES];
 	}
 	
 	return self;
@@ -143,6 +145,10 @@
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 {
+  for(UITouch *t in touches){
+    [renderer finger:t touchedPoint:[t locationInView:self]];
+  }
+  
 	[first release];
 	first = [[touches anyObject] retain];
 }
@@ -157,11 +163,27 @@
 		[renderer pan:sz];
   else 
   	[renderer debugPan:sz];
+  
+  for(UITouch *t in touches){
+    [renderer finger:t movedToPoint:[t locationInView:self]];
+  }
 }
+
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent*)evt;
-{
+{ 
+  for(UITouch *t in touches){
+    [renderer finger:t releasedPoint:[t locationInView:self]];
+  }
 	[self performSelector:@selector(velocityScroll) withObject:nil afterDelay:0.01];
 }
+
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+  for(UITouch *t in touches){
+    [renderer finger:t releasedPoint:[t locationInView:self]];
+  }  
+}
+
 -(void)velocityScroll;
 {
 	CGSize thisScroll = CGSizeMake(scrollVelocity.width*0.5, scrollVelocity.height*0.5);

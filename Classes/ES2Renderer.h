@@ -18,33 +18,44 @@
 @interface ES2Renderer : NSObject
 {
 @private
-    EAGLContext *context;
+  EAGLContext *context;
 
-    // The pixel dimensions of the CAEAGLLayer
-    GLint backingWidth;
-    GLint backingHeight;
+  // The pixel dimensions of the CAEAGLLayer
+  GLint backingWidth;
+  GLint backingHeight;
 
-    // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
-    GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;
+  // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
+  GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;
+  
+  float zoom;
+  CGPoint pan;
+  CGPoint cameraRot;
+  CATransform3D perspectiveMatrix;
+  ShaderProgram *shaderProgram;
+  ShaderProgram *pickingShader;
+  ShaderProgram *terrainShader;
+  
+  Heightmap *heightmap;
+  Texture2D *terraintex;
+
+  NSMutableArray *saker;
+  
+  NSMutableDictionary *fingers;
+  NSMutableArray *newFingers;
 
 
-		
-		CGPoint pan;
-    CGPoint debugPan;
-		CGPoint cameraRot;
-		CATransform3D perspectiveMatrix;
-    ShaderProgram *shaderProgram;
-    ShaderProgram *terrainShader;
-    
-    Entity *sak;
-    Heightmap *heightmap;
-		Texture2D *terraintex;
+  CGPoint debugPan;
 }
 
 - (void)render;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 
 - (void)pan:(CGSize)diff;
+- (void)zoom:(float)diff;
+
+- (void)finger:(id)touch touchedPoint:(CGPoint)point;
+- (void)finger:(id)touch releasedPoint:(CGPoint)point;
+- (void)finger:(id)touch movedToPoint:(CGPoint)point;
 - (void)debugPan:(CGSize)diff;
 @end
 
